@@ -1,0 +1,66 @@
+import {
+  Controller,
+  Post,
+  Get,
+  HttpStatus,
+  HttpCode,
+  Body,
+  Param,
+  Res,
+} from '@nestjs/common';
+import { Response } from 'express';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { UserDocument } from '../../users/schema/user.schema';
+import { AuthService } from '../service/auth.service';
+import { ResponseService } from 'src/shared/response.service';
+import { loginEmployeeDto } from '../dto/employee.dto';
+@ApiTags('Authentication')
+@Controller('auth')
+export class AuthController {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly responseService: ResponseService,
+  ) {}
+  @ApiResponse({
+    status: 200,
+    description: 'Fetch successfully',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  @Get('user/fetchErp')
+  async userRegister(@Res() res: Response): Promise<any> {
+    try {
+      const response = await this.authService.insertEmployee();
+      return this.responseService.json(
+        res,
+        200,
+        'Fetch Successfully',
+        response,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
+
+  @ApiResponse({
+    status: 200,
+    description: 'Login successfully',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  @Post('login')
+  async loginEmployee(
+    @Res() res: Response,
+    @Body() login: loginEmployeeDto,
+  ): Promise<any> {
+    try {
+      const response = await this.authService.login(login);
+      return this.responseService.json(
+        res,
+        200,
+        'Fetch Successfully',
+        response,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
+}

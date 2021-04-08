@@ -13,6 +13,9 @@ export default () => ({
     test: process.env.DATABASE_TEST_HOST,
     port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
   },
+  erp:{
+    baseUrl:process.env.ERPBASEURL
+  },
   isDev():boolean {
       const env = process.env.NODE_ENV;
       const envs = ['development', 'test', 'localhost', 'local'];

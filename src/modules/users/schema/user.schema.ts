@@ -38,6 +38,9 @@ export class User {
     type: String,
     description: 'Password',
   })
+  @Prop({
+    type: String,
+  })
   password: string;
   @ApiProperty({
     type: String,
@@ -46,7 +49,7 @@ export class User {
   @Prop({
     type: String,
   })
-  firstname?: string;
+  first_name?: string;
   @ApiProperty({
     type: String,
     description: 'Last Name',
@@ -54,7 +57,69 @@ export class User {
   @Prop({
     type: String,
   })
-  lastname?: string;
+  last_name?: string;
+  @ApiProperty({
+    type: String,
+    description: 'branch',
+  })
+  @Prop({
+    type: String,
+  })
+  branch?: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'gender',
+  })
+  @Prop({
+    type: String,
+  })
+  gender?: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'phone_no',
+  })
+  @Prop({
+    type: String,
+  })
+  phone_no?: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'joining_date',
+  })
+  @Prop({
+    type: String,
+  })
+  joining_date?: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'date_of_birth',
+  })
+  @Prop({
+    type: String,
+  })
+  date_of_birth?: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'department_id',
+  })
+  @Prop({
+    type: String,
+  })
+  department_id?: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'confirm_status',
+  })
+  @Prop({
+    type: String,
+  })
+  confirm_status?: string;
   @ApiProperty({
     type: Boolean,
     description: 'Roles',
