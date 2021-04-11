@@ -19,19 +19,11 @@ export type CourseDocument = Course & mongoose.Document;
 export class Course {
   @ApiProperty({
     type: String,
-    description: 'id',
-  })
-  @Prop({
-    type: String,
-    unique: true,
-  })
-  id: string;
-  @ApiProperty({
-    type: String,
     description: 'title',
   })
   @Prop({
     type: String,
+    unique: true,
   })
   title: string;
   @ApiProperty({

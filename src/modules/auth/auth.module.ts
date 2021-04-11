@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ResponseService } from 'src/shared/response.service';
-import { DEPARTMENT, USER } from '../users/common';
+import { DEPARTMENT, USER } from '../../common';
 import { DepartmentSchema } from '../users/schema/department.schema';
 import { UserSchema } from '../users/schema/user.schema';
 import { UsersModule } from '../users/users.module';
