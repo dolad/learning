@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { USER } from 'src/modules/users/common';
+import { USER } from 'src/common';
 import { User } from 'src/modules/users/interfaces/user.interfaces';
 import { ErpClass } from './ErpService';
-import { ApiRequest } from './fetchEmployee.services';
+import { JwtService } from '@nestjs/jwt';
 import { isEmpty } from 'lodash';
 import { comparePassword } from 'src/util/comparePassword';
 import { replaceEmail } from 'src/util/filter';
@@ -12,6 +12,7 @@ import { replaceEmail } from 'src/util/filter';
 export class AuthService {
   constructor(
     private readonly erpService: ErpClass,
+    private readonly jwtService: JwtService,
     @InjectModel(USER)
     private readonly userModel: Model<User>,
   ) {}
@@ -28,7 +29,7 @@ export class AuthService {
     return newUser;
   }
 
-  async login(employeeLogin): Promise<any> {
+  async validatedUser(employeeLogin): Promise<any> {
     const convertedEmail = replaceEmail(employeeLogin.email);
     console.log('newEmail', convertedEmail);
     const employee = await this.userModel.findOne({
@@ -37,14 +38,25 @@ export class AuthService {
     if (isEmpty(employee)) {
       throw new Error('Employee not registered');
     }
-    const result = await comparePassword(
+    const isValidated = await comparePassword(
       employeeLogin.password,
       employee.password,
     );
-    if (result === true) {
-      return employee;
-    } else {
-      throw new Error('Invalid Password');
+    return isValidated ? employee : false;
+  }
+
+  async login(employeeLogin): Promise<any> {
+    const employee = await this.validatedUser(employeeLogin);
+    if (!employeeLogin) {
+      throw new Error('Employee not registered');
     }
+    const access_token = this.jwtService.sign({
+      username: employee.email,
+      sub: employee._id,
+    });
+    return {
+      access_token,
+      employee,
+    };
   }
 }
