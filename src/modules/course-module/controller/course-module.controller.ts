@@ -48,7 +48,7 @@ export class CourseModuleController {
       return this.responseService.json(
         res,
         201,
-        'Course created Successfully',
+        'Course Modules created Successfully',
         modules,
       );
     } catch (error) {
@@ -85,7 +85,7 @@ export class CourseModuleController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(JwtAuthGuard)
   @Get('/:id')
-  async getSinglePlan(@Param('id') id: string, @Res() res: Response) {
+  async getSingleModules(@Param('id') id: string, @Res() res: Response) {
     try {
       const response = await this.courseModuleService.getCourseModuleById(id);
       if (!response) {
@@ -109,7 +109,7 @@ export class CourseModuleController {
   @ApiResponse({ status: 200, description: 'Successfully Processed' })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   @UseGuards(JwtAuthGuard)
-  async updatePlan(
+  async updateModules(
     @Body() course: CreateCourseModuleDto,
     @Param('id') id: string,
     @Res() res: Response,
