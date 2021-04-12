@@ -62,18 +62,19 @@ export class Course {
     type: String,
     description: 'Modules Object',
   })
-  @Prop({
-    type: mongoose.Schema.Types.ObjectId || String,
-    ref: COURSEMODULES,
-    autopopulate: true,
-  })
-  modules?: string;
+  @Prop([
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: COURSEMODULES,
+      autopopulate: true,
+    },
+  ])
+  course_modules?: [];
   @Prop({
     type: Boolean,
     default: false,
   })
   is_deleted?: boolean;
-
   @Prop({
     type: Date,
     default: null,

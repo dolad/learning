@@ -44,4 +44,10 @@ export class CourseService {
   async getCourseByTitle(title: string): Promise<ICourse> {
     return await this.courseModel.findOne({ title: title });
   }
+  async updateCourseModule(filter: any, update: any): Promise<any> {
+    const option = { upsert: true, new: true };
+    return await this.courseModel
+      .findOneAndUpdate(filter, update, option)
+      .populate('course_modules');
+  }
 }

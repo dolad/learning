@@ -1,12 +1,13 @@
 import { Document } from 'mongoose';
 
-export interface ICourse extends Document {
+export interface ICourseModule extends Document {
   title: string;
   description: string;
   author: string;
-  background_image?: string;
   has_completed?: boolean;
-  course_modules?: [];
+  lecture?: [];
+  course?: [];
   is_delete?: boolean;
   deleted_at?: Date;
+  time_to_complete?: string;
 }
