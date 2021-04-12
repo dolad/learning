@@ -9,8 +9,8 @@ export default () => ({
     hosts: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
+    test:process.env.DBTEST,
     // cluster: process.env.DATABASE_CLUSTER,
-    test: process.env.DATABASE_TEST_HOST,
     port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
   },
   erp:{

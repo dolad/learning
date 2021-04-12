@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import * as mongoosePaginate from 'mongoose-paginate-v2';
 import configuration from './config/app.config';
 import {
   UsersModule,
   AuthModule,
   CourseModule,
   CourseModuleModule,
+  LectureModule,
 } from './modules/index';
 @Module({
   imports: [
@@ -15,7 +17,12 @@ import {
       envFilePath: '.env',
       isGlobal: true,
     }),
-    MongooseModule.forRoot('mongodb://localhost/lms-test', {
+    MongooseModule.forRoot(configuration().database.test, {
+      connectionFactory: (connection) => {
+        connection.plugin(mongoosePaginate);
+        connection.plugin(require('mongoose-autopopulate'));
+        return connection;
+      },
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
@@ -25,6 +32,7 @@ import {
     AuthModule,
     CourseModule,
     CourseModuleModule,
+    LectureModule,
   ],
 })
 export class AppModule {}

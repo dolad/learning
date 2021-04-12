@@ -53,11 +53,13 @@ export class CourseModule {
     type: String,
     description: 'Lecture Object',
   })
-  @Prop({
-    type: mongoose.Schema.Types.ObjectId || String,
-    ref: LECTURES,
-    autopopulate: true,
-  })
+  @Prop([
+    {
+      type: mongoose.Schema.Types.ObjectId || String,
+      ref: LECTURES,
+      autopopulate: true,
+    },
+  ])
   lectures?: string;
   @ApiProperty({
     type: String,
