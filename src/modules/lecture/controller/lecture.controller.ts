@@ -11,8 +11,11 @@ import {
   Delete,
   ValidationPipe,
   HttpException,
+  UploadedFile,
+  UseInterceptors,
   HttpStatus,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
 import { ResponseService } from 'src/shared/response.service';
@@ -20,7 +23,8 @@ import { Response } from 'express';
 import { isEmpty } from 'lodash';
 import { LectureService } from '../service/lecture.service';
 import { CreateLectureDto } from '../dto/createLectureDto';
-
+import { Express } from 'express';
+import { CloudinaryService } from '../service/cloudinery.service';
 @ApiBearerAuth()
 @Controller('lecture')
 @ApiTags('Lectures')
@@ -28,21 +32,41 @@ export class LectureController {
   constructor(
     private responseService: ResponseService,
     private readonly lectureService: LectureService,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
+
+  @Post('test')
+  async test(@Body() test: string): Promise<any> {
+    return test;
+    // try {
+    //   const result = await this.cloudinaryService.uploadImage(file);
+    //   return this.responseService.json(
+    //     res,
+    //     201,
+    //     'Video successfully uploaded Successfully',
+    //     result,
+    //   );
+    // } catch (error) {
+    //   return this.responseService.json(res, error);
+    // }
+  }
 
   @Post('/:course_module_id')
   @UsePipes(new ValidationPipe({ transform: true }))
+  @UseInterceptors(FileInterceptor('file'))
   @ApiResponse({ status: 201, description: 'Successfully Created' })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   @UseGuards(JwtAuthGuard)
   public async createCourse(
     @Param('course_module_id') id: string,
+    @UploadedFile() file: Express.Multer.File,
     @Body() createLecture: CreateLectureDto,
     @Res() res: Response,
   ): Promise<any> {
     try {
       const modules = await this.lectureService.createLectures(
         id,
+        file,
         createLecture,
       );
       return this.responseService.json(
@@ -55,6 +79,7 @@ export class LectureController {
       return this.responseService.json(res, error);
     }
   }
+
   @ApiResponse({ status: 200, description: 'Lectures Successfully retreived' })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   @UseGuards(JwtAuthGuard)

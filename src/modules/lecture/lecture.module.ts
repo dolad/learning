@@ -9,6 +9,7 @@ import { CourseService } from '../course/service/course.service';
 import { UserSchema } from '../users/schema/user.schema';
 import { LectureController } from './controller/lecture.controller';
 import { LectureSchema } from './schema/lecture.schema';
+import { CloudinaryService } from './service/cloudinery.service';
 import { LectureService } from './service/lecture.service';
 
 @Module({
@@ -38,6 +39,7 @@ import { LectureService } from './service/lecture.service';
     ResponseService,
     CourseService,
     CourseModuleService,
+    CloudinaryService,
   ],
   exports: [LectureService],
 })

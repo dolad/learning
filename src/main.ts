@@ -22,7 +22,6 @@ async function bootstrap() {
   app.setGlobalPrefix('/api');
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('docs', app, document);
-  app.useGlobalPipes(new ValidationPipe());
   app.use(helmet());
   app.use(json({ limit: '100mb' }));
   app.use(urlencoded({ limit: '100mb', extended: true }));
