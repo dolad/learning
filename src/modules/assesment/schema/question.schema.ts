@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { OPTION, QUESTION } from 'src/common';
+import { OPTION } from 'src/common';
 
 export type QuestionDocument = Question & Document;
 

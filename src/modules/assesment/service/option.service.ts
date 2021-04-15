@@ -24,7 +24,7 @@ export class OptionService {
       );
     const option = await this.optionModel.create(optionDto);
     const update = {
-      $push: { option: option._id },
+      $push: { options: option._id },
     };
     const filter = { _id: question_id };
     const updateQuestion = await this.questionService.updateOption(
