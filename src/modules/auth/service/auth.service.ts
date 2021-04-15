@@ -46,7 +46,7 @@ export class AuthService {
 
   async login(employeeLogin): Promise<any> {
     const employee = await this.validatedUser(employeeLogin);
-    if (employeeLogin !== false) {
+    if (employee !== false) {
       console.log(employee);
       const access_token = this.jwtService.sign({
         username: employee.email,
