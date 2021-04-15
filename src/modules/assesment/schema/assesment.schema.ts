@@ -1,8 +1,7 @@
 import * as mongoose from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { expression } from 'joi';
-import { OPTION, QUESTION } from 'src/common';
+import { QUESTION } from 'src/common';
 import { IDuration } from '../interface/assessment.schema';
 
 export type AssessmentDocument = Assessment & Document;
