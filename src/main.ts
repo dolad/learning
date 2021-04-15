@@ -19,7 +19,7 @@ async function bootstrap() {
     .addBasicAuth()
     .build();
 
-  app.setGlobalPrefix('/api');
+  app.setGlobalPrefix('/api/v1');
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('docs', app, document);
   app.use(helmet());
