@@ -11,115 +11,111 @@ import {
   Delete,
   ValidationPipe,
   HttpException,
-  UploadedFile,
-  UseInterceptors,
   HttpStatus,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
 import { ResponseService } from 'src/shared/response.service';
 import { Response } from 'express';
+import { QuestionService } from '../service/question.service';
+import { CreateQuestionDto, UpdateQuestionDto } from '../dto/question.dto';
 import { isEmpty } from 'lodash';
-import { LectureService } from '../service/lecture.service';
-import { CreateLectureDto } from '../dto/createLectureDto';
-import { Express } from 'express';
+
 @ApiBearerAuth()
-@Controller('lecture')
-@ApiTags('Lectures')
-export class LectureController {
+@Controller('question')
+@ApiTags('Question')
+export class QuestionController {
   constructor(
     private responseService: ResponseService,
-    private readonly lectureService: LectureService,
+    private readonly questionService: QuestionService,
   ) {}
 
-  @Post('/:course_module_id')
+  @Post('/:assessment_id')
   @UsePipes(new ValidationPipe({ transform: true }))
-  @UseInterceptors(FileInterceptor('file'))
   @ApiResponse({ status: 201, description: 'Successfully Created' })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   @UseGuards(JwtAuthGuard)
   public async createCourse(
-    @Param('course_module_id') id: string,
-    @UploadedFile() file: Express.Multer.File,
-    @Body() createLecture: CreateLectureDto,
+    @Param('assessment_id') assessment_id: string,
+    @Body() questionDto: CreateQuestionDto,
     @Res() res: Response,
   ): Promise<any> {
     try {
-      const modules = await this.lectureService.createLectures(
-        id,
-        file,
-        createLecture,
+      const question = await this.questionService.createQuestion(
+        assessment_id,
+        questionDto,
       );
       return this.responseService.json(
         res,
         201,
-        'Lecture created Successfully',
-        modules,
+        'Question created Successfully',
+        question,
       );
     } catch (error) {
       return this.responseService.json(res, error);
     }
   }
 
-  @ApiResponse({ status: 200, description: 'Lectures Successfully retreived' })
+  @ApiResponse({ status: 200, description: 'Question Successfully retreived' })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   @UseGuards(JwtAuthGuard)
   @Get('')
-  async getAllCourse(@Res() res: Response) {
+  async findAll(@Res() res: Response) {
     try {
-      const lectures = await this.lectureService.getAllLectures();
-      if (isEmpty(lectures)) {
-        return this.responseService.json(res, 404, 'No modules found');
+      const course = await this.questionService.getAllQuestion();
+      if (isEmpty(course)) {
+        return this.responseService.json(res, 404, 'No question found');
       }
       return this.responseService.json(
         res,
         200,
-        'Lectures retrieved successfully',
-        lectures,
+        'Question retrieved successfully',
+        course,
       );
     } catch (error) {
       return this.responseService.json(res, error);
     }
   }
-  @ApiResponse({ status: 200, description: 'Lectures Retrieved Successfully' })
+
+  @ApiResponse({ status: 200, description: 'Question Retrieved Successfully' })
   @ApiResponse({
     status: 404,
-    description: "Couldn'nt retrieve lecture with this id",
+    description: "Couldn'nt retrieve question with id",
   })
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseGuards(JwtAuthGuard)
   @Get('/:id')
-  async getSinglePlan(@Param('id') id: string, @Res() res: Response) {
+  async getSingleModules(@Param('id') id: string, @Res() res: Response) {
     try {
-      const response = await this.lectureService.getLectureById(id);
+      const response = await this.questionService.getQuestionById(id);
       if (!response) {
         throw new HttpException(
-          `No Lectures with id ${id}`,
+          `No Question with id ${id}`,
           HttpStatus.NOT_FOUND,
         );
       }
       return this.responseService.json(
         res,
         201,
-        'Lectures retrieved successfully',
+        'Question retrieved successfully',
         response,
       );
     } catch (error) {
       return this.responseService.json(res, error);
     }
   }
+
   @Patch('/:id')
   @ApiResponse({ status: 200, description: 'Successfully Processed' })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   @UseGuards(JwtAuthGuard)
-  async updatePlan(
-    @Body() course: CreateLectureDto,
+  async updateModules(
+    @Body() course: UpdateQuestionDto,
     @Param('id') id: string,
     @Res() res: Response,
   ) {
     try {
-      const response = await this.lectureService.updatelecture(id, course);
+      const response = await this.questionService.updateQuestion(id, course);
       if (!response) {
         throw new HttpException(
           `No course model with id ${id}`,
@@ -141,46 +137,20 @@ export class LectureController {
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   @UseGuards(JwtAuthGuard)
   @Delete('/:id')
-  async deleteLecture(@Param('id') id: string, @Res() res: Response) {
+  async delete(@Param('id') id: string, @Res() res: Response) {
     try {
-      const response = await this.lectureService.deleteLecture(id);
+      const response = await this.questionService.deleteQuestion(id);
       if (!response) {
         throw new HttpException(
-          `No Lecture Module with id ${id}`,
+          `No Course Module with id ${id}`,
           HttpStatus.NOT_FOUND,
         );
       }
+
       return this.responseService.json(
         res,
         201,
         'Deleted successfully',
-        response,
-      );
-    } catch (error) {
-      return this.responseService.json(res, error);
-    }
-  }
-
-  @ApiResponse({ status: 200, description: 'Successfully Processed' })
-  @ApiResponse({ status: 500, description: 'Internal Server Error' })
-  @UseGuards(JwtAuthGuard)
-  @Get('/:title')
-  async getCourseModuleByName(
-    @Param('title') title: string,
-    @Res() res: Response,
-  ) {
-    try {
-      const response = await this.lectureService.getLectureByTitle(title);
-      if (!response) {
-        throw new HttpException(
-          `No Lecture with id ${title}`,
-          HttpStatus.NOT_FOUND,
-        );
-      }
-      return this.responseService.json(
-        res,
-        201,
-        'retrieved successfully',
         response,
       );
     } catch (error) {

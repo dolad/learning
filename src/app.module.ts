@@ -9,6 +9,7 @@ import {
   CourseModule,
   CourseModuleModule,
   LectureModule,
+  AssesmentModule,
 } from './modules/index';
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import {
     CourseModule,
     CourseModuleModule,
     LectureModule,
+    AssesmentModule,
   ],
 })
 export class AppModule {}

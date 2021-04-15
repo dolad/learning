@@ -6,7 +6,6 @@ import { CreateCourseModuleDto } from '../dto/create-module.dto';
 import { ICourseModule } from '../interface/course_module.interface';
 import { isEmpty } from 'lodash';
 import { CourseService } from 'src/modules/course/service/course.service';
-import { AnyARecord } from 'node:dns';
 
 @Injectable()
 export class CourseModuleService {
@@ -56,7 +55,9 @@ export class CourseModuleService {
     });
   }
   async getAllCourseModule(): Promise<ICourseModule[]> {
-    return await this.courseModel.find({ is_deleted: false });
+    return await this.courseModel
+      .find({ is_deleted: false })
+      .populate('lectures');
   }
   async getCourseModuleById(course_id: string): Promise<ICourseModule> {
     return await this.courseModel.findById(course_id);
@@ -66,6 +67,8 @@ export class CourseModuleService {
   }
   async updateLecture(filter: any, update: any): Promise<any> {
     const option = { upsert: true, new: true };
-    return await this.courseModel.findOneAndUpdate(filter, update, option);
+    return await this.courseModel
+      .findOneAndUpdate(filter, update, option)
+      .populate('lectures');
   }
 }

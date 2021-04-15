@@ -13,6 +13,11 @@ export default () => ({
     // cluster: process.env.DATABASE_CLUSTER,
     port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
   },
+  cloudinary: {
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+},
   erp:{
     baseUrl:process.env.ERPBASEURL
   },

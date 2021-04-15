@@ -2,13 +2,17 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { USER, COURSEMODULES, LECTURES, COURSE } from 'src/common';
 import { ResponseService } from 'src/shared/response.service';
+import { CourseModuleModule } from '../course-module/course-module.module';
 import { CourseModuleSchema } from '../course-module/schema/course-module.schema';
 import { CourseModuleService } from '../course-module/service/course-module.service';
+import { CourseModule } from '../course/course.module';
 import { CourseSchema } from '../course/schema/course.schema';
 import { CourseService } from '../course/service/course.service';
 import { UserSchema } from '../users/schema/user.schema';
+import { UsersModule } from '../users/users.module';
 import { LectureController } from './controller/lecture.controller';
 import { LectureSchema } from './schema/lecture.schema';
+import { CloudinaryService } from './service/cloudinery.service';
 import { LectureService } from './service/lecture.service';
 
 @Module({
@@ -31,6 +35,9 @@ import { LectureService } from './service/lecture.service';
         schema: CourseSchema,
       },
     ]),
+    CourseModuleModule,
+    UsersModule,
+    CourseModule,
   ],
   controllers: [LectureController],
   providers: [
@@ -38,6 +45,7 @@ import { LectureService } from './service/lecture.service';
     ResponseService,
     CourseService,
     CourseModuleService,
+    CloudinaryService,
   ],
   exports: [LectureService],
 })

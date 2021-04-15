@@ -36,14 +36,17 @@ export class CreateLectureDto {
 
   @IsString()
   @ApiProperty()
+  @IsOptional()
   video_url?: string;
 
   @IsString()
   @ApiProperty()
+  @IsOptional()
   html_content?: string;
 
   @IsBoolean()
   @ApiProperty()
+  @IsOptional()
   has_completed?: boolean;
 
   @IsBoolean()
@@ -53,5 +56,6 @@ export class CreateLectureDto {
 
   @IsDate()
   @ApiProperty()
+  @IsOptional()
   deleted_at?: Date;
 }

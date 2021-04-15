@@ -31,7 +31,6 @@ export class AuthService {
 
   async validatedUser(employeeLogin): Promise<any> {
     const convertedEmail = replaceEmail(employeeLogin.email);
-    console.log('newEmail', convertedEmail);
     const employee = await this.userModel.findOne({
       email: convertedEmail,
     });
@@ -47,16 +46,18 @@ export class AuthService {
 
   async login(employeeLogin): Promise<any> {
     const employee = await this.validatedUser(employeeLogin);
-    if (!employeeLogin) {
-      throw new Error('Employee not registered');
+    if (employee !== false) {
+      console.log(employee);
+      const access_token = this.jwtService.sign({
+        username: employee.email,
+        sub: employee._id,
+      });
+      return {
+        access_token,
+        employee,
+      };
+    } else {
+      throw new Error('Invalid login details');
     }
-    const access_token = this.jwtService.sign({
-      username: employee.email,
-      sub: employee._id,
-    });
-    return {
-      access_token,
-      employee,
-    };
   }
 }
