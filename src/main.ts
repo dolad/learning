@@ -8,7 +8,7 @@ import { ValidationPipe } from './shared/pipes/validation.pipes';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    cors: CorsConfig,
+    cors: true,
     bodyParser: false,
   });
 

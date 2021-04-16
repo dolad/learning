@@ -46,6 +46,7 @@ export class Assessment {
   @ApiProperty({
     type: String,
     description: 'is_enabled',
+    default: false,
   })
   @Prop({
     type: String,

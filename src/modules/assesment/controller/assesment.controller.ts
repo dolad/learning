@@ -12,6 +12,8 @@ import {
   ValidationPipe,
   HttpException,
   HttpStatus,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { AssesmentService } from '../service/assesment.service';
@@ -20,6 +22,7 @@ import { UpdateAssesmentDto } from '../dto/update-assesment.dto';
 import { ResponseService } from 'src/shared/response.service';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
 import { Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiBearerAuth()
 @Controller('assesment')
@@ -134,6 +137,28 @@ export class AssesmentController {
       }
 
       return this.responseService.json(res, 201, 'Deleted successfully', ass);
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
+
+  @Post('/uploads')
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiResponse({ status: 201, description: 'Successfully Processed' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  @UseGuards(JwtAuthGuard)
+  async createViaUploads(
+    @UploadedFile() file: Express.Multer.File,
+    @Res() res: Response,
+  ): Promise<any> {
+    try {
+      const assessment = await this.assesmentService.createViaExcel(file);
+      return this.responseService.json(
+        res,
+        201,
+        'Assessment created Successfully',
+        assessment,
+      );
     } catch (error) {
       return this.responseService.json(res, error);
     }

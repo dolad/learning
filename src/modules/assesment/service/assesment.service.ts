@@ -6,6 +6,7 @@ import { ASSESSMENT } from 'src/common';
 import { IAssesments } from '../interface/assessment.schema';
 import { isEmpty } from 'lodash';
 import { InjectModel } from '@nestjs/mongoose';
+import { readBuffer, convertToSave } from 'src/shared/files/readExcel';
 
 @Injectable()
 export class AssesmentService {
@@ -54,5 +55,10 @@ export class AssesmentService {
     return await this.assessmentModel
       .findOneAndUpdate(filter, update, option)
       .populate('questions');
+  }
+  async createViaExcel(file): Promise<any> {
+    const result = readBuffer(file);
+    const name = convertToSave(result);
+    return name;
   }
 }
