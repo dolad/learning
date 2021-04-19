@@ -66,7 +66,7 @@ export class Assessment {
   questions?: [];
   @Prop({
     type: Object,
-    default: false,
+    default: null,
   })
   @ApiProperty({
     type: Object,
@@ -76,7 +76,7 @@ export class Assessment {
 
   @Prop({
     type: Object,
-    default: false,
+    default: null,
   })
   @ApiProperty({
     type: Object,
