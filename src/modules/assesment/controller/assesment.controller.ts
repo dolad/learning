@@ -18,7 +18,10 @@ import {
 import { ApiBearerAuth, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { AssesmentService } from '../service/assesment.service';
 import { CreateAssesmentDto } from '../dto/create-assesment.dto';
-import { UpdateAssesmentDto } from '../dto/update-assesment.dto';
+import {
+  SubmittingAssesment,
+  UpdateAssesmentDto,
+} from '../dto/update-assesment.dto';
 import { ResponseService } from 'src/shared/response.service';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
 import { Response } from 'express';
@@ -158,6 +161,34 @@ export class AssesmentController {
         201,
         'Assessment created Successfully',
         assessment,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
+
+  @Patch('submit-assesment/:id')
+  async submitAssesment(
+    @Param('id') id: string,
+    @Body() updateAssesmentDto: SubmittingAssesment,
+    @Res() res: Response,
+  ) {
+    try {
+      const ass = await this.assesmentService.submitAssesment(
+        id,
+        updateAssesmentDto,
+      );
+      if (!ass) {
+        throw new HttpException(
+          `No assesment with id ${id}`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      return this.responseService.json(
+        res,
+        200,
+        'Assesment updated successfully',
+        ass,
       );
     } catch (error) {
       return this.responseService.json(res, error);

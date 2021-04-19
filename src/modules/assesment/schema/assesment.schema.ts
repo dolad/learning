@@ -73,6 +73,16 @@ export class Assessment {
     description: 'durations',
   })
   durations?: IDuration;
+
+  @Prop({
+    type: Object,
+    default: false,
+  })
+  @ApiProperty({
+    type: Object,
+    description: 'score',
+  })
+  score?: number;
 }
 
 export const AssessmentSchema = SchemaFactory.createForClass(Assessment);

@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { OPTION } from 'src/common';
+import { IOptions } from '../interface/options.interface';
 
 export type QuestionDocument = Question & Document;
 
@@ -32,7 +32,6 @@ export class Question {
   })
   @Prop({
     type: Number,
-    unique: true,
   })
   question_number: number;
   @ApiProperty({
@@ -51,22 +50,17 @@ export class Question {
     type: String,
   })
   explanation?: string;
-  @ApiProperty({
-    type: String,
-    description: 'Options Object',
-  })
-  @Prop([
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: OPTION,
-      autopopulate: true,
-    },
-  ])
-  options?: [];
   @Prop({
-    type: Boolean,
-    default: false,
+    type: Object,
   })
+  @ApiProperty({
+    type: Object,
+    description: 'option',
+  })
+  @Prop({
+    type: Object,
+  })
+  options: IOptions;
   @ApiProperty({
     type: String,
     description: 'is_enabled',

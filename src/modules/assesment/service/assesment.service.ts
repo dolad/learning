@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAssesmentDto } from '../dto/create-assesment.dto';
-import { UpdateAssesmentDto } from '../dto/update-assesment.dto';
+import {
+  UpdateAssesmentDto,
+  SubmittingAssesment,
+} from '../dto/update-assesment.dto';
 import { Model } from 'mongoose';
 import { ASSESSMENT } from 'src/common';
 import { IAssesments } from '../interface/assessment.schema';
@@ -60,5 +63,21 @@ export class AssesmentService {
     const result = readBuffer(file);
     const name = convertToSave(result);
     return name;
+  }
+
+  async submitAssesment(
+    id: string,
+    assesment: SubmittingAssesment,
+  ): Promise<any> {
+    const answer: Array<string> = ['a', 'b', 'c', 'd'];
+    // const payload = await this.assessmentModel.findOneAndUpdate(
+    //   { _id: id },
+    //   { $set: assesment },
+    //   { upsert: true, new: true },
+    // );
+    return {
+      assesment,
+      answer,
+    };
   }
 }

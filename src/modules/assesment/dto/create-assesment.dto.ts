@@ -5,7 +5,6 @@ import {
   IsObject,
   IsOptional,
   IsDateString,
-  IsDate,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IDuration } from '../interface/assessment.schema';
