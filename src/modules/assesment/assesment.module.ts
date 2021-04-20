@@ -24,6 +24,6 @@ import { QuestionController } from './controller/question.controller';
   ],
   controllers: [AssesmentController, QuestionController],
   providers: [AssesmentService, ResponseService, QuestionService],
-  exports: [AssesmentService, QuestionService],
+  exports: [AssesmentService],
 })
 export class AssesmentModule {}

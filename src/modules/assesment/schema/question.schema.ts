@@ -2,6 +2,8 @@ import * as mongoose from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IOptions } from '../interface/options.interface';
+import { ASSESSMENT } from 'src/common';
+import { Document, SchemaTypes } from 'mongoose';
 
 export type QuestionDocument = Question & Document;
 
@@ -13,6 +15,7 @@ export type QuestionDocument = Question & Document;
     transform: (_doc: any, ret: any): void => {
       delete ret._id;
       delete ret.__v;
+      delete ret.answer;
     },
   },
 })
@@ -36,12 +39,20 @@ export class Question {
   question_number: number;
   @ApiProperty({
     type: String,
-    description: 'answer',
+    description: 'instruction',
   })
   @Prop({
     type: String,
   })
   instruction: string;
+  @ApiProperty({
+    type: String,
+    description: 'answer',
+  })
+  @Prop({
+    type: String,
+  })
+  answer: string;
   @ApiProperty({
     type: String,
     description: 'explanations',
@@ -52,20 +63,29 @@ export class Question {
   explanation?: string;
   @Prop({
     type: Object,
+    default: null,
   })
   @ApiProperty({
     type: Object,
-    description: 'option',
+    description: 'options',
   })
   @Prop({
     type: Object,
   })
-  options: IOptions;
+  options?: IOptions;
   @ApiProperty({
     type: String,
     description: 'is_enabled',
   })
   is_enabled?: boolean;
+  @ApiProperty({
+    type: String,
+    description: 'Asssesment Object',
+  })
+  @Prop({
+    type: mongoose.SchemaTypes.ObjectId || String,
+    ref: ASSESSMENT,
+  })
+  assesment_id: string;
 }
-
 export const QuestionSchema = SchemaFactory.createForClass(Question);

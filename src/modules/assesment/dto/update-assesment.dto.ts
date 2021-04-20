@@ -13,5 +13,5 @@ export class SubmittingAssesment {
   @IsArray()
   @IsOptional()
   @ApiProperty()
-  anwers?: Array<string>;
+  data?: Array<any>;
 }

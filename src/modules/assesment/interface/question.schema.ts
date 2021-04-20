@@ -8,4 +8,5 @@ export interface IQuestion extends Document {
   answer: string;
   is_enable: boolean;
   explanation: string;
+  assesment_id: string;
 }

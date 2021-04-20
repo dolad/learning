@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { QUESTION } from 'src/common';
+import { AssesmentStatus, AssesmentType, QUESTION } from 'src/common';
 import { IDuration } from '../interface/assessment.schema';
 
 export type AssessmentDocument = Assessment & Document;
@@ -49,9 +49,9 @@ export class Assessment {
     default: false,
   })
   @Prop({
-    type: String,
+    type: Boolean,
   })
-  is_enabled?: string;
+  is_enabled?: boolean;
   @ApiProperty({
     type: String,
     description: 'Question Object',
@@ -75,14 +75,40 @@ export class Assessment {
   durations?: IDuration;
 
   @Prop({
-    type: Object,
+    type: String,
     default: null,
   })
   @ApiProperty({
-    type: Object,
+    type: String,
     description: 'score',
   })
-  score?: number;
+  score?: string;
+  @ApiProperty({
+    type: String,
+    description: 'Assesment_status',
+  })
+  @Prop({
+    type: String,
+    enum: AssesmentStatus,
+    default: AssesmentStatus.Inactive,
+  })
+  status?: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'Assesment_type',
+  })
+  @Prop({
+    type: String,
+    enum: AssesmentType,
+    default: AssesmentType.General,
+  })
+  assesment_type?: string;
+  @Prop({
+    type: Date,
+    default: null,
+  })
+  completed_at?: Date;
 }
 
 export const AssessmentSchema = SchemaFactory.createForClass(Assessment);

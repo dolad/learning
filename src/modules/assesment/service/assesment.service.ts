@@ -5,17 +5,21 @@ import {
   SubmittingAssesment,
 } from '../dto/update-assesment.dto';
 import { Model } from 'mongoose';
-import { ASSESSMENT } from 'src/common';
+import { AssesmentStatus, ASSESSMENT, QUESTION } from 'src/common';
 import { IAssesments } from '../interface/assessment.schema';
 import { isEmpty } from 'lodash';
 import { InjectModel } from '@nestjs/mongoose';
 import { readBuffer, convertToSave } from 'src/shared/files/readExcel';
+import { calculatePercentage } from 'src/util/compareAnswer';
+import { IQuestion } from '../interface/question.schema';
 
 @Injectable()
 export class AssesmentService {
   constructor(
     @InjectModel(ASSESSMENT)
     private readonly assessmentModel: Model<IAssesments>,
+    @InjectModel(QUESTION)
+    private readonly questionModel: Model<IQuestion>,
   ) {}
   async createAssessment(
     createAssesmentDto: CreateAssesmentDto,
@@ -65,19 +69,49 @@ export class AssesmentService {
     return name;
   }
 
+  async updateWithFilter(filter: any, update: any): Promise<any> {
+    const option = { upsert: true };
+    return await this.assessmentModel.findOneAndUpdate(filter, update, option);
+  }
+
   async submitAssesment(
     id: string,
     assesment: SubmittingAssesment,
   ): Promise<any> {
-    const answer: Array<string> = ['a', 'b', 'c', 'd'];
-    // const payload = await this.assessmentModel.findOneAndUpdate(
-    //   { _id: id },
-    //   { $set: assesment },
-    //   { upsert: true, new: true },
-    // );
-    return {
-      assesment,
-      answer,
-    };
+    const getAssesment = await this.findOne(id);
+    if (!isEmpty(getAssesment.questions)) {
+      const answer2: Array<any> = assesment.data;
+      const newArray = [];
+      await Promise.all(
+        answer2.map(async (item) => {
+          const result = await this.questionModel.findById(item.question);
+          if (result.answer === item.answer) {
+            newArray.push(item.answer);
+          }
+          return { result: result.answer };
+        }),
+      );
+      const getAssesment = await this.findOne(id);
+      const result = newArray.length;
+      const totalQuestion =
+        getAssesment && getAssesment.questions !== null
+          ? getAssesment.questions.length
+          : 0;
+      const percentage = calculatePercentage(result, totalQuestion);
+      const filter = { _id: id };
+      const update = {
+        $set: {
+          score: `${percentage}%`,
+          completed_at: Date.now(),
+          status: AssesmentStatus.Completed,
+          is_enabled: false,
+        },
+      };
+      return await this.updateWithFilter(filter, update);
+    } else {
+      throw new Error(
+        `Assesment with this [${id}] does not have any question yet please populate`,
+      );
+    }
   }
 }
