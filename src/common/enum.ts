@@ -1,6 +1,7 @@
 export enum UserRoles {
   SuperAdmin = 'super-admin',
   Admin = 'admin',
+  User = 'user',
 }
 
 export enum UserTypes {
@@ -22,5 +23,5 @@ export enum AssesmentType {
 
 export const UserRolesEnums = Object.values(UserRoles);
 export const UserTypesEnums = Object.values(UserTypes);
-export const PlanTagsEnums = Object.values(AssesmentStatus);
+export const AssesmentStatusEnum = Object.values(AssesmentStatus);
 export const AssesmentTypeEnums = Object.values(AssesmentType);

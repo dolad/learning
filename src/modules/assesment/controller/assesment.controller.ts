@@ -82,6 +82,12 @@ export class AssesmentController {
   }
 
   @Get(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'Assessment Successfully retreived',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: string, @Res() res: Response): Promise<any> {
     try {
       const ass = await this.assesmentService.findOne(id);
@@ -103,6 +109,12 @@ export class AssesmentController {
   }
 
   @Patch(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'Assessment Successfully Processed',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  @UseGuards(JwtAuthGuard)
   async update(
     @Param('id') id: string,
     @Body() updateAssesmentDto: UpdateAssesmentDto,
@@ -127,7 +139,40 @@ export class AssesmentController {
     }
   }
 
+  @Patch('activate-assesment/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'Assessment Successfully Activated',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  @UseGuards(JwtAuthGuard)
+  async activateAssetment(@Param('id') id: string, @Res() res: Response) {
+    try {
+      const ass = await this.assesmentService.activateAssesment(id);
+      if (!ass) {
+        throw new HttpException(
+          `No assesment with id ${id}`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      return this.responseService.json(
+        res,
+        200,
+        'Assesment activated successfully',
+        ass,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
+
   @Delete(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'Assessment Successfully Processed',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  @UseGuards(JwtAuthGuard)
   async remove(@Param('id') id: string, @Res() res: Response): Promise<any> {
     try {
       const ass = await this.assesmentService.remove(id);

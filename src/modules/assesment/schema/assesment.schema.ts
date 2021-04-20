@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { AssesmentStatus, AssesmentType, QUESTION } from 'src/common';
+import { AssesmentStatus, AssesmentType, QUESTION, USER } from 'src/common';
 import { IDuration } from '../interface/assessment.schema';
 
 export type AssessmentDocument = Assessment & Document;
@@ -14,6 +14,7 @@ export type AssessmentDocument = Assessment & Document;
     transform: (_doc: any, ret: any): void => {
       delete ret._id;
       delete ret.__v;
+      delete ret.users;
     },
   },
 })
@@ -109,6 +110,17 @@ export class Assessment {
     default: null,
   })
   completed_at?: Date;
+  @ApiProperty({
+    type: String,
+    description: 'User Object',
+  })
+  @Prop([
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: USER,
+    },
+  ])
+  users?: [];
 }
 
 export const AssessmentSchema = SchemaFactory.createForClass(Assessment);

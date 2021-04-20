@@ -13,4 +13,5 @@ export interface IAssesments extends Document {
   is_enabled: boolean;
   questions: [];
   durations: IDuration;
+  users: Array<string>;
 }
