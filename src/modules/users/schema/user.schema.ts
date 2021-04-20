@@ -1,6 +1,7 @@
 import * as mongoose from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ASSESSMENT, UserRoles, UserTypes } from 'src/common';
 
 export type UserDocument = User & mongoose.Document;
 
@@ -120,14 +121,20 @@ export class User {
     type: String,
   })
   confirm_status?: string;
-  @ApiProperty({
-    type: Boolean,
-    description: 'Roles',
-  })
+
   @Prop({
-    type: Boolean,
+    type: String,
+    enum: UserTypes,
+    default: UserTypes.Employee,
   })
-  is_admin?: string;
+  user_type?: string;
+
+  @Prop({
+    type: String,
+    enum: UserRoles,
+    default: UserRoles.User,
+  })
+  user_roles?: string;
   @Prop({
     type: Boolean,
     default: false,
@@ -138,6 +145,17 @@ export class User {
     default: null,
   })
   deleted_at?: Date;
+  @ApiProperty({
+    type: String,
+    description: 'Assesment Object',
+  })
+  @Prop([
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: ASSESSMENT,
+    },
+  ])
+  assesments?: [];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

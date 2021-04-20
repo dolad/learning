@@ -1,16 +1,14 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { AssesmentService } from './service/assesment.service';
 import { AssesmentController } from './controller/assesment.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ASSESSMENT, OPTION, QUESTION } from 'src/common';
+import { ASSESSMENT, QUESTION } from 'src/common';
 import { AssessmentSchema } from './schema/assesment.schema';
-import { OptionSchema } from './schema/option.schema';
 import { QuestionSchema } from './schema/question.schema';
-import { ResponseService } from 'src/shared/response.service';
+import { ResponseService } from '../../shared/response.service';
 import { QuestionService } from './service/question.service';
-import { OptionService } from './service/option.service';
 import { QuestionController } from './controller/question.controller';
-import { OptionController } from './controller/optionController';
+import { UsersModule } from '../users/users.module';
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -19,22 +17,14 @@ import { OptionController } from './controller/optionController';
         schema: AssessmentSchema,
       },
       {
-        name: OPTION,
-        schema: OptionSchema,
-      },
-      {
         name: QUESTION,
         schema: QuestionSchema,
       },
     ]),
+    forwardRef(() => UsersModule),
   ],
-  controllers: [AssesmentController, QuestionController, OptionController],
-  providers: [
-    AssesmentService,
-    ResponseService,
-    QuestionService,
-    OptionService,
-  ],
-  exports: [AssesmentService, QuestionService, OptionService],
+  controllers: [AssesmentController, QuestionController],
+  providers: [AssesmentService, ResponseService, QuestionService],
+  exports: [AssesmentService],
 })
 export class AssesmentModule {}

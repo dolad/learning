@@ -1,18 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAssesmentDto } from '../dto/create-assesment.dto';
-import { UpdateAssesmentDto } from '../dto/update-assesment.dto';
+import {
+  UpdateAssesmentDto,
+  SubmittingAssesment,
+} from '../dto/update-assesment.dto';
 import { Model } from 'mongoose';
-import { ASSESSMENT } from 'src/common';
+import {
+  AssesmentStatus,
+  AssesmentType,
+  AssesmentTypeEnums,
+  ASSESSMENT,
+  QUESTION,
+} from 'src/common';
 import { IAssesments } from '../interface/assessment.schema';
 import { isEmpty } from 'lodash';
 import { InjectModel } from '@nestjs/mongoose';
 import { readBuffer, convertToSave } from 'src/shared/files/readExcel';
+import { calculatePercentage } from 'src/util/compareAnswer';
+import { IQuestion } from '../interface/question.schema';
+import { UserService } from '../../users/service/users.service';
 
 @Injectable()
 export class AssesmentService {
   constructor(
     @InjectModel(ASSESSMENT)
     private readonly assessmentModel: Model<IAssesments>,
+    @InjectModel(QUESTION)
+    private readonly questionModel: Model<IQuestion>,
+    private readonly userServices: UserService,
   ) {}
   async createAssessment(
     createAssesmentDto: CreateAssesmentDto,
@@ -21,10 +36,24 @@ export class AssesmentService {
       name: createAssesmentDto.name,
     });
     if (isEmpty(check)) {
-      return await this.assessmentModel.create(createAssesmentDto);
+      return await this.createAssesmentForAllUser(createAssesmentDto);
     } else {
       throw new Error(`Assessment  [${createAssesmentDto.name}] already exist`);
     }
+  }
+
+  private async createAssesmentForAllUser(createAssesmentDto): Promise<any> {
+    const assesment: IAssesments = await new this.assessmentModel(
+      createAssesmentDto,
+    );
+    const update = {
+      $push: { assesments: assesment.id },
+    };
+    await this.userServices.updateAllUserDocument(update);
+    const allUser = await this.userServices.findAll();
+    const userIds = allUser.map((user) => user.id);
+    assesment.users = userIds;
+    return await assesment.save();
   }
 
   async findAll(): Promise<IAssesments[]> {
@@ -60,5 +89,52 @@ export class AssesmentService {
     const result = readBuffer(file);
     const name = convertToSave(result);
     return name;
+  }
+
+  async updateWithFilter(filter: any, update: any): Promise<any> {
+    const option = { upsert: true, returnNewDocument: true };
+    return await this.assessmentModel.findOneAndUpdate(filter, update, option);
+  }
+
+  async activateAssesment(id: string): Promise<IAssesments> {
+    const update = {
+      $set: {
+        status: AssesmentStatus.Active,
+        is_enabled: true,
+      },
+    };
+    const filter = { _id: id };
+    return await this.updateWithFilter(filter, update);
+  }
+
+  async submitAssesment(
+    id: string,
+    assesment: SubmittingAssesment,
+  ): Promise<any> {
+    const getAssesment = await this.findOne(id);
+    if (!isEmpty(getAssesment.questions)) {
+      const answer2: Array<any> = assesment.data;
+      const allQuestion = await this.questionModel.find({ assesment_id: id });
+      const correctAnswer = allQuestion.filter((o1) =>
+        answer2.some((o2) => o1.id === o2.question && o1.answer === o2.answer),
+      );
+      const result = correctAnswer ? correctAnswer.length : 0;
+      const totalQuestion = allQuestion ? allQuestion.length : 0;
+      const percentage = calculatePercentage(result, totalQuestion);
+      const filter = { _id: id };
+      const update = {
+        $set: {
+          score: `${percentage}%`,
+          completed_at: Date.now(),
+          status: AssesmentStatus.Completed,
+          is_enabled: false,
+        },
+      };
+      return await this.updateWithFilter(filter, update);
+    } else {
+      throw new Error(
+        `Assesment with this [${id}] does not have any question yet please populate`,
+      );
+    }
   }
 }

@@ -5,10 +5,10 @@ import {
   IsObject,
   IsOptional,
   IsDateString,
-  IsDate,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IDuration } from '../interface/assessment.schema';
+import { AssesmentType } from 'src/common';
 
 export class CreateAssesmentDto {
   @IsString()
@@ -20,6 +20,11 @@ export class CreateAssesmentDto {
   @IsNotEmpty()
   @ApiProperty()
   instruction: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  assesment_type: AssesmentType;
 
   @IsBoolean()
   @IsOptional()

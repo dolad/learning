@@ -18,6 +18,7 @@ export class QuestionService {
   public async createQuestion(
     id: string,
     questionDto: CreateQuestionDto,
+    assesment_id: string,
   ): Promise<IQuestion> {
     const checkAssessment: IAssesments = await this.assesmentService.findOne(
       id,
@@ -28,7 +29,9 @@ export class QuestionService {
       question: questionDto.question,
     });
     if (isEmpty(check)) {
-      const question = await this.questionModel.create(questionDto);
+      const question = await new this.questionModel(questionDto);
+      question.assesment_id = assesment_id;
+      await question.save();
       const update = {
         $push: { questions: question._id },
       };
@@ -60,7 +63,10 @@ export class QuestionService {
     });
   }
   async getAllQuestion(): Promise<IQuestion[]> {
-    return await this.questionModel.find().populate('options');
+    return await this.questionModel.find();
+  }
+  async getWithAssessmentID(id): Promise<IQuestion[]> {
+    return await this.questionModel.find({ assesment_id: id });
   }
   async getQuestionById(quesion_id: string): Promise<IQuestion> {
     return await this.questionModel.findById(quesion_id);

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { USER } from 'src/common';
-import { User } from 'src/modules/users/interfaces/user.interfaces';
+import { IUser } from 'src/modules/users/interfaces/user.interfaces';
 import { ErpClass } from './ErpService';
 import { JwtService } from '@nestjs/jwt';
 import { isEmpty } from 'lodash';
@@ -14,7 +14,7 @@ export class AuthService {
     private readonly erpService: ErpClass,
     private readonly jwtService: JwtService,
     @InjectModel(USER)
-    private readonly userModel: Model<User>,
+    private readonly userModel: Model<IUser>,
   ) {}
 
   async insertEmployee(): Promise<any> {

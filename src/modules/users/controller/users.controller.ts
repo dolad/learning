@@ -1,16 +1,100 @@
-import { Body, Res, Param, Controller, Patch, Post, Get } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Response } from 'express';
+import {
+  Body,
+  Res,
+  Param,
+  Controller,
+  UseGuards,
+  Post,
+  Get,
+  Patch,
+  Delete,
+  ValidationPipe,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 
+import { Response } from 'express';
+import { ResponseService } from 'src/shared/response.service';
+import { UserService } from '../service/users.service';
+import { ApiBearerAuth, ApiTags, ApiResponse } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
+import { AuthUserDecorator } from '../decorator/user.decorator';
+import { IUser } from '../interfaces/user.interfaces';
+
+@ApiBearerAuth()
 @ApiTags('Users')
 @Controller('users')
 export class UserController {
-  //   constructor() {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly responseService: ResponseService,
+  ) {}
 
-  @Get('/test')
+  @Get('me')
+  @ApiResponse({
+    status: 200,
+    description: 'Users Successfully retreived',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  @UseGuards(JwtAuthGuard)
+  async authUser(
+    @AuthUserDecorator() authUser: any,
+    @Res() res: Response,
+  ): Promise<any> {
+    try {
+      const user = await this.userService.findOne(authUser.userId);
+      if (!user) {
+        throw new HttpException(`No user with id`, HttpStatus.NOT_FOUND);
+      }
+      return this.responseService.json(
+        res,
+        200,
+        'user retrieved successfully',
+        user,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
+  @Get('')
   @ApiResponse({ status: 200, description: 'Successfully tested' })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
-  async getTest(): Promise<string> {
-    return 'yes';
+  @UseGuards(JwtAuthGuard)
+  async getAllUsers(@Res() res: Response): Promise<any> {
+    try {
+      const users = await this.userService.findAll();
+      return this.responseService.json(
+        res,
+        201,
+        'User retrived Successfully',
+        users,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
+
+  @Get(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'Users Successfully retreived',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  @UseGuards(JwtAuthGuard)
+  async findOne(@Param('id') id: string, @Res() res: Response): Promise<any> {
+    try {
+      const user = await this.userService.findOne(id);
+      if (!user) {
+        throw new HttpException(`No user with id ${id}`, HttpStatus.NOT_FOUND);
+      }
+      return this.responseService.json(
+        res,
+        200,
+        'user retrieved successfully',
+        user,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
   }
 }
