@@ -81,22 +81,12 @@ export class AssesmentService {
     const getAssesment = await this.findOne(id);
     if (!isEmpty(getAssesment.questions)) {
       const answer2: Array<any> = assesment.data;
-      const newArray = [];
-      await Promise.all(
-        answer2.map(async (item) => {
-          const result = await this.questionModel.findById(item.question);
-          if (result.answer === item.answer) {
-            newArray.push(item.answer);
-          }
-          return { result: result.answer };
-        }),
+      const allQuestion = await this.questionModel.find({ assesment_id: id });
+      const correctAnswer = allQuestion.filter((o1) =>
+        answer2.some((o2) => o1.id === o2.question && o1.answer === o2.answer),
       );
-      const getAssesment = await this.findOne(id);
-      const result = newArray.length;
-      const totalQuestion =
-        getAssesment && getAssesment.questions !== null
-          ? getAssesment.questions.length
-          : 0;
+      const result = correctAnswer.length;
+      const totalQuestion = allQuestion ? allQuestion.length : 0;
       const percentage = calculatePercentage(result, totalQuestion);
       const filter = { _id: id };
       const update = {
