@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { Model, QueryOptions } from 'mongoose';
 import { USER } from 'src/common';
 import { isEmpty } from 'lodash';
 import { InjectModel } from '@nestjs/mongoose';
@@ -13,11 +13,15 @@ export class UserService {
   async findAll(): Promise<IUser[]> {
     return await this.userModel.find();
   }
-
   async findOne(id: string): Promise<IUser> {
-    return await this.userModel.findById(id).populate('assesments');
+    return await this.userModel.findById(id);
   }
-
+  async findAndFilter(id: string, option: QueryOptions): Promise<IUser> {
+    return await this.userModel.findById(id).populate({
+      path: 'assesments',
+      match: { [option.fields]: new RegExp(`.*${option.context}.*`) },
+    });
+  }
   async remove(id: string): Promise<any> {
     return await this.userModel.findByIdAndDelete(id);
   }

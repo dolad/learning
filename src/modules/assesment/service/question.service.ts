@@ -63,13 +63,17 @@ export class QuestionService {
     });
   }
   async getAllQuestion(): Promise<IQuestion[]> {
-    return await this.questionModel.find();
+    return await this.questionModel.find().populate('assesment_id');
   }
   async getWithAssessmentID(id): Promise<IQuestion[]> {
-    return await this.questionModel.find({ assesment_id: id });
+    return await this.questionModel
+      .find({ assesment_id: id })
+      .populate('assesment_id');
   }
   async getQuestionById(quesion_id: string): Promise<IQuestion> {
-    return await this.questionModel.findById(quesion_id);
+    return await this.questionModel
+      .findById(quesion_id)
+      .populate('assesment_id', 'durations');
   }
   async updateOption(filter: any, update: any): Promise<any> {
     const option = { upsert: true, new: true };

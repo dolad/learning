@@ -30,6 +30,33 @@ export class UserController {
     private readonly responseService: ResponseService,
   ) {}
 
+  @Get('assesment')
+  @ApiResponse({
+    status: 200,
+    description: 'Users Successfully retreived',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  @UseGuards(JwtAuthGuard)
+  async authUserAssesment(
+    @AuthUserDecorator() authUser: any,
+    @Res() res: Response,
+  ): Promise<any> {
+    try {
+      const user = await this.userService.findOne(authUser.userId);
+      if (!user) {
+        throw new HttpException(`No user with id`, HttpStatus.NOT_FOUND);
+      }
+      return this.responseService.json(
+        res,
+        200,
+        'user retrieved successfully',
+        user,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
+
   @Get('me')
   @ApiResponse({
     status: 200,
@@ -56,6 +83,7 @@ export class UserController {
       return this.responseService.json(res, error);
     }
   }
+
   @Get('')
   @ApiResponse({ status: 200, description: 'Successfully tested' })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
