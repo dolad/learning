@@ -60,6 +60,10 @@ export class AssesmentService {
     return await this.assessmentModel.find();
   }
 
+  // async findWithUser(): Promise<IAssesments[]> {
+  //   return await this.assessmentModel.find({users})
+  // }
+
   async findOne(id: string): Promise<IAssesments> {
     return await this.assessmentModel.findById(id);
   }

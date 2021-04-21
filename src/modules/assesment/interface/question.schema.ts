@@ -1,4 +1,5 @@
 import { Document } from 'mongoose';
+import { IAssesments } from './assessment.schema';
 import { IOptions } from './options.interface';
 
 export interface IQuestion extends Document {
@@ -9,4 +10,5 @@ export interface IQuestion extends Document {
   is_enable: boolean;
   explanation: string;
   assesment_id: string;
+  assesments: IAssesments;
 }
