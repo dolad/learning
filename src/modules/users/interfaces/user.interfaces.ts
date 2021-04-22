@@ -17,4 +17,5 @@ export interface IUser extends Document {
   allowed_leaves?: string;
   confirm_status?: string;
   is_admin?: boolean;
+  assesments?: any;
 }

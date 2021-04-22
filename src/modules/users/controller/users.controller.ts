@@ -1,6 +1,7 @@
 import {
   Body,
   Res,
+  Req,
   Param,
   Controller,
   UseGuards,
@@ -20,6 +21,8 @@ import { ApiBearerAuth, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
 import { AuthUserDecorator } from '../decorator/user.decorator';
 import { IUser } from '../interfaces/user.interfaces';
+import { QueryOptions } from 'src/common/query';
+import { UserTypes } from 'src/common';
 
 @ApiBearerAuth()
 @ApiTags('Users')
@@ -33,16 +36,20 @@ export class UserController {
   @Get('assesment')
   @ApiResponse({
     status: 200,
-    description: 'Users Successfully retreived',
+    description: 'Users Assesment retreived',
   })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   @UseGuards(JwtAuthGuard)
   async authUserAssesment(
     @AuthUserDecorator() authUser: any,
+    @Req() req,
     @Res() res: Response,
   ): Promise<any> {
     try {
-      const user = await this.userService.findOne(authUser.userId);
+      const user = await this.userService.findAndFilter(
+        authUser.userId,
+        req.query,
+      );
       if (!user) {
         throw new HttpException(`No user with id`, HttpStatus.NOT_FOUND);
       }

@@ -1,6 +1,6 @@
 export class QueryOptions {
   offset?: number;
   limit?: number;
-  fields?: string;
+  status?: string;
   text?: string;
 }

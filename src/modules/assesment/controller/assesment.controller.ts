@@ -26,7 +26,6 @@ import { ResponseService } from 'src/shared/response.service';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
 import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { AuthUserDecorator } from 'src/modules/users/decorator/user.decorator';
 
 @ApiBearerAuth()
 @Controller('assesment')
