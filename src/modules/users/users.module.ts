@@ -6,6 +6,8 @@ import { UserSchema } from './schema/user.schema';
 import { ResponseService } from '../../shared/response.service';
 import { USER } from 'src/common/index';
 import { AssesmentModule } from '../assesment/assesment.module';
+import { RolesGuard } from './roles.guard';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [

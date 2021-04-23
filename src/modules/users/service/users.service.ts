@@ -18,7 +18,6 @@ export class UserService {
     return await this.userModel.findById(id);
   }
   async findAndFilter(id: string, option: QueryOptions): Promise<any> {
-    console.log(option);
     const user = await this.userModel.findById(id).populate({
       path: 'assesments',
       match: { ...option },
@@ -37,7 +36,16 @@ export class UserService {
     return updatedUsers;
   }
   async updateWithFilter(filter: any, update: any): Promise<IUser> {
-    const option = { upsert: true };
+    const option = { upsert: true, new: true };
     return await this.userModel.findOneAndUpdate(filter, update, option);
+  }
+  async makeAdmin(email): Promise<IUser> {
+    const filter = { email: email };
+    const update = {
+      $set: {
+        user_roles: 'admin',
+      },
+    };
+    return await this.updateWithFilter(filter, update);
   }
 }

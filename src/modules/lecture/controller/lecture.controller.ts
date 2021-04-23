@@ -24,6 +24,10 @@ import { isEmpty } from 'lodash';
 import { LectureService } from '../service/lecture.service';
 import { CreateLectureDto } from '../dto/createLectureDto';
 import { Express } from 'express';
+import { RolesGuard } from 'src/modules/users/roles.guard';
+import { Roles } from 'src/modules/users/decorator/roles.decorator';
+import { UserRoles } from 'src/common';
+
 @ApiBearerAuth()
 @Controller('lecture')
 @ApiTags('Lectures')
@@ -33,12 +37,13 @@ export class LectureController {
     private readonly lectureService: LectureService,
   ) {}
 
-  @Post('/:course_module_id')
+  @Post('admin/:course_module_id')
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseInterceptors(FileInterceptor('file'))
   @ApiResponse({ status: 201, description: 'Successfully Created' })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoles.Admin)
   public async createCourse(
     @Param('course_module_id') id: string,
     @UploadedFile() file: Express.Multer.File,
@@ -112,7 +117,8 @@ export class LectureController {
   @Patch('/:id')
   @ApiResponse({ status: 200, description: 'Successfully Processed' })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoles.Admin)
   async updatePlan(
     @Body() course: CreateLectureDto,
     @Param('id') id: string,
@@ -139,7 +145,8 @@ export class LectureController {
 
   @ApiResponse({ status: 200, description: 'Successfully Processed' })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRoles.Admin)
   @Delete('/:id')
   async deleteLecture(@Param('id') id: string, @Res() res: Response) {
     try {

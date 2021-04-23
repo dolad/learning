@@ -20,10 +20,10 @@ import { UserService } from '../service/users.service';
 import { ApiBearerAuth, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
 import { AuthUserDecorator } from '../decorator/user.decorator';
-import { IUser } from '../interfaces/user.interfaces';
-import { QueryOptions } from 'src/common/query';
-import { UserTypes } from 'src/common';
-
+import { UserRoles } from 'src/common';
+import { Roles } from '../decorator/roles.decorator';
+import { RolesGuard } from '../roles.guard';
+import { MakeAdmin } from '../dto/user.dto';
 @ApiBearerAuth()
 @ApiTags('Users')
 @Controller('users')
@@ -32,6 +32,32 @@ export class UserController {
     private readonly userService: UserService,
     private readonly responseService: ResponseService,
   ) {}
+
+  @Post('make-admin')
+  @Roles(UserRoles.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async makeAdmin(
+    @Body() email: MakeAdmin,
+    @Res() res: Response,
+  ): Promise<any> {
+    try {
+      const user = await this.userService.makeAdmin(email.email);
+      if (!user) {
+        throw new HttpException(
+          `No assesment with id ${email.email}`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      return this.responseService.json(
+        res,
+        200,
+        'User profile updated successfully',
+        user,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
 
   @Get('assesment')
   @ApiResponse({

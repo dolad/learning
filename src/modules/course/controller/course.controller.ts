@@ -20,6 +20,9 @@ import { Response } from 'express';
 import { CourseService } from '../service/course.service';
 import { CreateCourseDto } from '../dto/course.dto';
 import { isEmpty } from 'lodash';
+import { RolesGuard } from 'src/modules/users/roles.guard';
+import { Roles } from 'src/modules/users/decorator/roles.decorator';
+import { UserRoles } from 'src/common';
 
 @ApiBearerAuth()
 @Controller('course')
@@ -30,11 +33,12 @@ export class CourseController {
     private responseService: ResponseService,
   ) {}
 
-  @Post('')
+  @Post('/admin')
   @UsePipes(new ValidationPipe({ transform: true }))
   @ApiResponse({ status: 201, description: 'Successfully Processed' })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   public async createCourse(
     @Body() createCourse: CreateCourseDto,
     @Res() res: Response,
@@ -102,10 +106,11 @@ export class CourseController {
     }
   }
 
-  @Patch('/:id')
+  @Patch('admin/:id')
   @ApiResponse({ status: 200, description: 'Successfully Processed' })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async updatePlan(
     @Body() course: CreateCourseDto,
     @Param('id') id: string,
@@ -133,8 +138,9 @@ export class CourseController {
 
   @ApiResponse({ status: 200, description: 'Successfully Processed' })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
-  @UseGuards(JwtAuthGuard)
-  @Delete('/:id')
+  @Roles(UserRoles.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Delete('admin/:id')
   async deleteCourse(@Param('id') id: string, @Res() res: Response) {
     try {
       const response = await this.courseService.deleteCourse(id);

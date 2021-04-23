@@ -18,4 +18,5 @@ export interface IUser extends Document {
   confirm_status?: string;
   is_admin?: boolean;
   assesments?: any;
+  user_roles?: string;
 }

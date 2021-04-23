@@ -26,6 +26,9 @@ import { ResponseService } from 'src/shared/response.service';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
 import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { RolesGuard } from 'src/modules/users/roles.guard';
+import { Roles } from 'src/modules/users/decorator/roles.decorator';
+import { UserRoles } from 'src/common';
 
 @ApiBearerAuth()
 @Controller('assesment')
@@ -36,11 +39,12 @@ export class AssesmentController {
     private readonly responseService: ResponseService,
   ) {}
 
-  @Post()
+  @Post('admin')
   @UsePipes(new ValidationPipe({ transform: true }))
   @ApiResponse({ status: 201, description: 'Successfully Processed' })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async create(
     @Body() createAssesmentDto: CreateAssesmentDto,
     @Res() res: Response,
@@ -108,13 +112,14 @@ export class AssesmentController {
     }
   }
 
-  @Patch(':id')
+  @Patch('admin/:id')
   @ApiResponse({
     status: 200,
     description: 'Assessment Successfully Processed',
   })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async update(
     @Param('id') id: string,
     @Body() updateAssesmentDto: UpdateAssesmentDto,
@@ -139,13 +144,14 @@ export class AssesmentController {
     }
   }
 
-  @Patch('activate-assesment/:id')
+  @Patch('admin/activate-assesment/:id')
   @ApiResponse({
     status: 200,
     description: 'Assessment Successfully Activated',
   })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async activateAssetment(@Param('id') id: string, @Res() res: Response) {
     try {
       const ass = await this.assesmentService.activateAssesment(id);
@@ -166,13 +172,14 @@ export class AssesmentController {
     }
   }
 
-  @Delete(':id')
+  @Delete('admin/:id')
+  @Roles(UserRoles.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiResponse({
     status: 200,
     description: 'Assessment Successfully Processed',
   })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
-  @UseGuards(JwtAuthGuard)
   async remove(@Param('id') id: string, @Res() res: Response): Promise<any> {
     try {
       const ass = await this.assesmentService.remove(id);
@@ -190,11 +197,12 @@ export class AssesmentController {
     }
   }
 
-  @Post('/uploads')
+  @Post('admin/uploads')
   @UseInterceptors(FileInterceptor('file'))
   @ApiResponse({ status: 201, description: 'Successfully Processed' })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRoles.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   async createViaUploads(
     @UploadedFile() file: Express.Multer.File,
     @Res() res: Response,
