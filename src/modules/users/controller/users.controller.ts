@@ -72,7 +72,7 @@ export class UserController {
     @Res() res: Response,
   ): Promise<any> {
     try {
-      const user = await this.userService.findAndFilter(
+      const user = await this.userService.findAndFilterWithAssesment(
         authUser.userId,
         req.query,
       );
@@ -121,9 +121,9 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Successfully tested' })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   @UseGuards(JwtAuthGuard)
-  async getAllUsers(@Res() res: Response): Promise<any> {
+  async getAllUsers(@Res() res: Response, @Req() req): Promise<any> {
     try {
-      const users = await this.userService.findAll();
+      const users = await this.userService.findAll(req.query);
       return this.responseService.json(
         res,
         201,
