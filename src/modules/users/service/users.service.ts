@@ -11,8 +11,12 @@ export class UserService {
     @InjectModel(USER)
     private readonly userModel: Model<IUser>,
   ) {}
-  async findAll(): Promise<IUser[]> {
-    return await this.userModel.find();
+  async findAll(query?: any): Promise<IUser[]> {
+    console.log('queryuser', query);
+    const queryUser = !query
+      ? await this.userModel.find()
+      : await this.userModel.find({ ...query });
+    return queryUser;
   }
   async findOne(id: string): Promise<IUser> {
     return await this.userModel.findById(id);
@@ -33,7 +37,10 @@ export class UserService {
     );
     return updatedUsers;
   }
-  async findAndFilter(id: string, option: QueryOptions): Promise<any> {
+  async findAndFilterWithAssesment(
+    id: string,
+    option: QueryOptions,
+  ): Promise<any> {
     const user = await this.userModel.findById(id).populate({
       path: 'assesments',
       match: { ...option },
