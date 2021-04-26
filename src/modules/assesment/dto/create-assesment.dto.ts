@@ -5,6 +5,7 @@ import {
   IsObject,
   IsOptional,
   IsDateString,
+  IsArray,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IDuration } from '../interface/assessment.schema';
@@ -34,10 +35,20 @@ export class CreateAssesmentDto {
   @IsDateString()
   @IsOptional()
   @ApiPropertyOptional()
-  month?: Date;
+  start_date?: Date;
+
+  @IsDateString()
+  @IsOptional()
+  @ApiPropertyOptional()
+  end_date?: Date;
 
   @IsObject()
   @IsNotEmpty()
   @ApiProperty()
   durations: IDuration;
+
+  @IsArray()
+  @IsOptional()
+  @ApiPropertyOptional()
+  users: [];
 }

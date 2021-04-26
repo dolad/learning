@@ -38,12 +38,20 @@ export class Assessment {
   instruction: string;
   @ApiProperty({
     type: Date,
-    description: 'month',
+    description: 'start_date',
   })
   @Prop({
     type: Date,
   })
-  month: Date;
+  start_date: Date;
+  @ApiProperty({
+    type: Date,
+    description: 'end_date',
+  })
+  @Prop({
+    type: Date,
+  })
+  end_date: Date;
   @ApiProperty({
     type: String,
     description: 'is_enabled',

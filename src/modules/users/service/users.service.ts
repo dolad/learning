@@ -4,7 +4,7 @@ import { USER } from 'src/common';
 import { isEmpty } from 'lodash';
 import { InjectModel } from '@nestjs/mongoose';
 import { IUser } from '../interfaces/user.interfaces';
-import { QueryOptions } from 'src/common/query';
+import { QueryOptions } from '../../../common/query';
 @Injectable()
 export class UserService {
   constructor(
@@ -16,6 +16,22 @@ export class UserService {
   }
   async findOne(id: string): Promise<IUser> {
     return await this.userModel.findById(id);
+  }
+  async findArrayOfSelecteduser(ids: Array<string>): Promise<IUser[]> {
+    return await this.userModel.find({ _id: { $in: ids } });
+  }
+  async updateSelectedUsersWithAssesment(
+    update: any,
+    ids: Array<string>,
+  ): Promise<any> {
+    const option = { upsert: true };
+    console.log('ids', ids);
+    const updatedUsers = await this.userModel.updateMany(
+      { _id: { $in: ids } },
+      update,
+      option,
+    );
+    return updatedUsers;
   }
   async findAndFilter(id: string, option: QueryOptions): Promise<any> {
     const user = await this.userModel.findById(id).populate({
