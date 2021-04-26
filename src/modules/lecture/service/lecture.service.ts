@@ -23,7 +23,6 @@ export class LectureService {
     const checkModule = await this.courseModuleService.getCourseModuleById(
       module_id,
     );
-
     if (isEmpty(checkModule))
       throw new Error(`Module with id [${module_id}] doesn't already exist`);
     const checkLectures = await this.lectureModel.findOne({

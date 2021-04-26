@@ -12,7 +12,6 @@ export class UserService {
     private readonly userModel: Model<IUser>,
   ) {}
   async findAll(query?: any): Promise<IUser[]> {
-    console.log('queryuser', query);
     const queryUser = !query
       ? await this.userModel.find()
       : await this.userModel.find({ ...query });

@@ -10,11 +10,9 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UserDocument } from '../../users/schema/user.schema';
 import { AuthService } from '../service/auth.service';
 import { ResponseService } from 'src/shared/response.service';
 import { loginEmployeeDto } from '../dto/employee.dto';
-import { ValidationPipe } from 'src/shared/pipes/validation.pipes';
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
