@@ -48,7 +48,6 @@ export class QuestionController {
       const question = await this.questionService.createQuestion(
         assessment_id,
         questionDto,
-        assessment_id,
       );
       return this.responseService.json(
         res,

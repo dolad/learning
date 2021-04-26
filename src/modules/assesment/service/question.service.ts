@@ -18,19 +18,13 @@ export class QuestionService {
   public async createQuestion(
     id: string,
     questionDto: CreateQuestionDto,
-    assesment_id: string,
   ): Promise<IQuestion> {
-    const checkAssessment: IAssesments = await this.assesmentService.findOne(
-      id,
-    );
-    if (isEmpty(checkAssessment))
-      throw new Error(`Assessment with id [${id}] doesn't already exist`);
     const check = await this.questionModel.findOne({
       question: questionDto.question,
     });
     if (isEmpty(check)) {
       const question = await new this.questionModel(questionDto);
-      question.assesment_id = assesment_id;
+      question.assesment_id = id;
       await question.save();
       const update = {
         $push: { questions: question._id },
