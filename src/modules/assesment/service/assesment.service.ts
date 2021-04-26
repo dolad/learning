@@ -5,13 +5,7 @@ import {
   SubmittingAssesment,
 } from '../dto/update-assesment.dto';
 import { Model } from 'mongoose';
-import {
-  AssesmentStatus,
-  AssesmentType,
-  AssesmentTypeEnums,
-  ASSESSMENT,
-  QUESTION,
-} from 'src/common';
+import { AssesmentStatus, ASSESSMENT, QUESTION } from 'src/common';
 import { IAssesments } from '../interface/assessment.schema';
 import { isEmpty } from 'lodash';
 import { InjectModel } from '@nestjs/mongoose';
@@ -36,16 +30,18 @@ export class AssesmentService {
       name: createAssesmentDto.name,
     });
     if (isEmpty(check)) {
-      return await this.createAssesmentForAllUser(createAssesmentDto);
+      const createAssesment =
+        createAssesmentDto.assesment_type === 'general'
+          ? await this.createAssesmentForAllUser(createAssesmentDto)
+          : await this.createAssesmentForSelectedUser(createAssesmentDto);
+      return createAssesment;
     } else {
       throw new Error(`Assessment  [${createAssesmentDto.name}] already exist`);
     }
   }
 
   private async createAssesmentForAllUser(createAssesmentDto): Promise<any> {
-    const assesment: IAssesments = await new this.assessmentModel(
-      createAssesmentDto,
-    );
+    const assesment: IAssesments = new this.assessmentModel(createAssesmentDto);
     const update = {
       $push: { assesments: assesment.id },
     };
@@ -56,14 +52,28 @@ export class AssesmentService {
     return await assesment.save();
   }
 
+  private async createAssesmentForSelectedUser(
+    createAssesmentDto,
+  ): Promise<IAssesments> {
+    const assesment: IAssesments = new this.assessmentModel(createAssesmentDto);
+    const update = {
+      $push: { assesments: assesment.id },
+    };
+    if (!createAssesmentDto.users) {
+      throw new Error(` you have not selecteed any user`);
+    }
+    const allUser = await this.userServices.findArrayOfSelecteduser(
+      createAssesmentDto.users,
+    );
+    const userIds = allUser.map((user) => user.id);
+    await this.userServices.updateSelectedUsersWithAssesment(update, userIds);
+    assesment.users = userIds;
+    return await assesment.save();
+  }
+
   async findAll(): Promise<IAssesments[]> {
     return await this.assessmentModel.find();
   }
-
-  // async findWithUser(): Promise<IAssesments[]> {
-  //   return await this.assessmentModel.find({users})
-  // }
-
   async findOne(id: string): Promise<IAssesments> {
     return await this.assessmentModel.findById(id);
   }
@@ -79,7 +89,6 @@ export class AssesmentService {
     );
     return payload;
   }
-
   async remove(id: string): Promise<IAssesments> {
     return await this.assessmentModel.findByIdAndDelete(id);
   }

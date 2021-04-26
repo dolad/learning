@@ -36,7 +36,7 @@ export class Question {
   @Prop({
     type: Number,
   })
-  question_number: number;
+  question_number?: number;
   @ApiProperty({
     type: String,
     description: 'instruction',
