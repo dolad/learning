@@ -19,9 +19,9 @@ export class CreateAssesmentDto {
   name: string;
 
   @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  instruction: string;
+  @IsOptional()
+  @ApiPropertyOptional()
+  instruction?: string;
 
   @IsString()
   @IsNotEmpty()
