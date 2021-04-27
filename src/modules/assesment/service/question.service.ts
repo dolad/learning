@@ -65,4 +65,64 @@ export class QuestionService {
       .findOneAndUpdate(filter, update, option)
       .populate('options');
   }
+
+  // async createUser(createUserDto: CreateUserDto): Promise<User> {
+  //   const session = await this.userModel.db.startSession();
+  //   session.startTransaction();
+
+  //   try {
+  //     const {
+  //       email,
+  //       phoneNumber,
+  //       businessName,
+  //       name,
+  //       userType,
+  //       password,
+  //       inviteToken,
+  //     } = createUserDto;
+  //     const user = new this.userModel({ email, password, name, userType });
+
+  //     user.$session(session);
+
+  //     const savedUser = await user.save();
+
+  //     if (userType === UserTypes.business) {
+  //       const business = await this.businessService.createBusiness(
+  //         user._id,
+  //         {
+  //           email,
+  //           phoneNumber,
+  //           name: businessName,
+  //         },
+  //         session,
+  //       );
+  //       await this.kycService.createForEntity(business._id, UserTypes.business);
+  //     } else {
+  //       const employee = await this.employeeService.createEmployee(
+  //         user._id,
+  //         { phoneNumber, inviteToken },
+  //         session,
+  //       );
+  //       await this.kycService.createForEntity(employee._id, UserTypes.employee);
+  //     }
+
+  //     await session.commitTransaction();
+  //     return savedUser;
+  //   } catch (e) {
+  //     if (e.code === 11000) {
+  //       throw new ConflictException(
+  //         `A user with this ${camelCaseToWords(
+  //           Object.keys(e.keyPattern)[0],
+  //         ).toLowerCase()} already exists`,
+  //       );
+  //     }
+
+  //     if (e && e.code !== 11000) {
+  //       throw new InternalServerErrorException(e.message);
+  //     }
+  //     await session.abortTransaction();
+  //   } finally {
+  //     session.endSession();
+  //   }
+  // }
 }
