@@ -1,9 +1,6 @@
 import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { CreateAssesmentDto } from '../dto/create-assesment.dto';
-import {
-  UpdateAssesmentDto,
-  SubmittingAssesment,
-} from '../dto/update-assesment.dto';
+import { SubmittingAssesment } from '../dto/update-assesment.dto';
 import { Model } from 'mongoose';
 import { AssesmentStatus, ASSESSMENT, QUESTION } from 'src/common';
 import { IAssesments } from '../interface/assessment.schema';
@@ -148,7 +145,11 @@ export class AssesmentService {
       const answer2: Array<any> = assesment.data;
       const allQuestion = await this.questionModel.find({ assesment_id: id });
       const correctAnswer = allQuestion.filter((o1) =>
-        answer2.some((o2) => o1.id === o2.question && o1.answer === o2.answer),
+        answer2.some(
+          (o2) =>
+            o1.id === o2.question &&
+            o1.answer.toLowerCase() === o2.answer.toLowerCase(),
+        ),
       );
       const result = correctAnswer ? correctAnswer.length : 0;
       const totalQuestion = allQuestion ? allQuestion.length : 0;
