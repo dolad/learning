@@ -25,6 +25,6 @@ import { UsersModule } from '../users/users.module';
   ],
   controllers: [AssesmentController, QuestionController],
   providers: [AssesmentService, ResponseService, QuestionService],
-  exports: [AssesmentService],
+  exports: [AssesmentService, QuestionService],
 })
 export class AssesmentModule {}

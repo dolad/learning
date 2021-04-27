@@ -33,33 +33,32 @@ export class QuestionController {
     private readonly questionService: QuestionService,
   ) {}
 
-  @Post('admin/:assessment_id')
-  @UsePipes(new ValidationPipe({ transform: true }))
-  @ApiResponse({ status: 201, description: 'Successfully Created' })
-  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRoles.Admin)
-  public async createCourse(
-    @Param('assessment_id') assessment_id: string,
-    @Body() questionDto: CreateQuestionDto,
-    @Res() res: Response,
-  ): Promise<any> {
-    try {
-      const question = await this.questionService.createQuestion(
-        assessment_id,
-        questionDto,
-        assessment_id,
-      );
-      return this.responseService.json(
-        res,
-        201,
-        'Question created Successfully',
-        question,
-      );
-    } catch (error) {
-      return this.responseService.json(res, error);
-    }
-  }
+  // @Post('admin/:assessment_id')
+  // @UsePipes(new ValidationPipe({ transform: true }))
+  // @ApiResponse({ status: 201, description: 'Successfully Created' })
+  // @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(UserRoles.Admin)
+  // public async createCourse(
+  //   @Param('assessment_id') assessment_id: string,
+  //   @Body() questionDto: CreateQuestionDto,
+  //   @Res() res: Response,
+  // ): Promise<any> {
+  //   try {
+  //     const question = await this.questionService.createQuestion(
+  //       assessment_id,
+  //       questionDto,
+  //     );
+  //     return this.responseService.json(
+  //       res,
+  //       201,
+  //       'Question created Successfully',
+  //       question,
+  //     );
+  //   } catch (error) {
+  //     return this.responseService.json(res, error);
+  //   }
+  // }
 
   @ApiResponse({ status: 200, description: 'Question Successfully retreived' })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })

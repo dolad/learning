@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { CreateAssesmentDto } from '../dto/create-assesment.dto';
 import {
   UpdateAssesmentDto,
@@ -13,6 +13,7 @@ import { readBuffer, convertToSave } from 'src/shared/files/readExcel';
 import { calculatePercentage } from 'src/util/compareAnswer';
 import { IQuestion } from '../interface/question.schema';
 import { UserService } from '../../users/service/users.service';
+import { QuestionService } from './question.service';
 
 @Injectable()
 export class AssesmentService {
@@ -21,6 +22,8 @@ export class AssesmentService {
     private readonly assessmentModel: Model<IAssesments>,
     @InjectModel(QUESTION)
     private readonly questionModel: Model<IQuestion>,
+    @Inject(forwardRef(() => QuestionService))
+    private readonly questionServices: QuestionService,
     private readonly userServices: UserService,
   ) {}
   async createAssessment(
@@ -49,12 +52,19 @@ export class AssesmentService {
     const allUser = await this.userServices.findAll();
     const userIds = allUser.map((user) => user.id);
     assesment.users = userIds;
-    return await assesment.save();
+    const asses = await assesment.save();
+    console.log('question', createAssesmentDto.question);
+    const question = await this.questionServices.createQuestion(
+      asses._id,
+      createAssesmentDto.question,
+    );
+    // create question
+    return question;
   }
 
   private async createAssesmentForSelectedUser(
     createAssesmentDto,
-  ): Promise<IAssesments> {
+  ): Promise<any> {
     const assesment: IAssesments = new this.assessmentModel(createAssesmentDto);
     const update = {
       $push: { assesments: assesment.id },
@@ -68,7 +78,14 @@ export class AssesmentService {
     const userIds = allUser.map((user) => user.id);
     await this.userServices.updateSelectedUsersWithAssesment(update, userIds);
     assesment.users = userIds;
-    return await assesment.save();
+    const ass = await assesment.save();
+    const question = await this.questionServices.createQuestion(
+      ass._id,
+      createAssesmentDto.questions,
+    );
+    console.log('question', question);
+    // create question
+    return question;
   }
 
   async findAll(): Promise<IAssesments[]> {
@@ -78,17 +95,17 @@ export class AssesmentService {
     return await this.assessmentModel.findById(id);
   }
 
-  async update(
-    id: string,
-    assesment: UpdateAssesmentDto,
-  ): Promise<IAssesments> {
-    const payload = await this.assessmentModel.findOneAndUpdate(
-      { _id: id },
-      { $set: assesment },
-      { upsert: true, new: true },
-    );
-    return payload;
-  }
+  // async update(
+  //   id: string,
+  //   assesment: UpdateAssesmentDto,
+  // ): Promise<IAssesments> {
+  //   const payload = await this.assessmentModel.findOneAndUpdate(
+  //     { _id: id },
+  //     { $set: assesment },
+  //     { upsert: true, new: true },
+  //   );
+  //   return payload;
+  // }
   async remove(id: string): Promise<IAssesments> {
     return await this.assessmentModel.findByIdAndDelete(id);
   }

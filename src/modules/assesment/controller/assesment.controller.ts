@@ -63,7 +63,6 @@ export class AssesmentController {
       return this.responseService.json(res, error);
     }
   }
-
   @ApiResponse({
     status: 200,
     description: 'Assessment Successfully retreived',
@@ -112,37 +111,37 @@ export class AssesmentController {
     }
   }
 
-  @Patch('admin/:id')
-  @ApiResponse({
-    status: 200,
-    description: 'Assessment Successfully Processed',
-  })
-  @ApiResponse({ status: 500, description: 'Internal Server Error' })
-  @Roles(UserRoles.Admin)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  async update(
-    @Param('id') id: string,
-    @Body() updateAssesmentDto: UpdateAssesmentDto,
-    @Res() res: Response,
-  ) {
-    try {
-      const ass = await this.assesmentService.update(id, updateAssesmentDto);
-      if (!ass) {
-        throw new HttpException(
-          `No assesment with id ${id}`,
-          HttpStatus.NOT_FOUND,
-        );
-      }
-      return this.responseService.json(
-        res,
-        200,
-        'Assesment updated successfully',
-        ass,
-      );
-    } catch (error) {
-      return this.responseService.json(res, error);
-    }
-  }
+  // @Patch('admin/:id')
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Assessment Successfully Processed',
+  // })
+  // @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  // @Roles(UserRoles.Admin)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // async update(
+  //   @Param('id') id: string,
+  //   @Body() updateAssesmentDto: UpdateAssesmentDto,
+  //   @Res() res: Response,
+  // ) {
+  //   try {
+  //     const ass = await this.assesmentService.update(id, updateAssesmentDto);
+  //     if (!ass) {
+  //       throw new HttpException(
+  //         `No assesment with id ${id}`,
+  //         HttpStatus.NOT_FOUND,
+  //       );
+  //     }
+  //     return this.responseService.json(
+  //       res,
+  //       200,
+  //       'Assesment updated successfully',
+  //       ass,
+  //     );
+  //   } catch (error) {
+  //     return this.responseService.json(res, error);
+  //   }
+  // }
 
   @Patch('admin/activate-assesment/:id')
   @ApiResponse({
@@ -192,29 +191,6 @@ export class AssesmentController {
       }
 
       return this.responseService.json(res, 201, 'Deleted successfully', ass);
-    } catch (error) {
-      return this.responseService.json(res, error);
-    }
-  }
-
-  @Post('admin/uploads')
-  @UseInterceptors(FileInterceptor('file'))
-  @ApiResponse({ status: 201, description: 'Successfully Processed' })
-  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
-  @Roles(UserRoles.Admin)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  async createViaUploads(
-    @UploadedFile() file: Express.Multer.File,
-    @Res() res: Response,
-  ): Promise<any> {
-    try {
-      const assessment = await this.assesmentService.createViaExcel(file);
-      return this.responseService.json(
-        res,
-        201,
-        'Assessment created Successfully',
-        assessment,
-      );
     } catch (error) {
       return this.responseService.json(res, error);
     }
