@@ -39,6 +39,30 @@ export class AssesmentController {
     private readonly responseService: ResponseService,
   ) {}
 
+  @Post('admin')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @ApiResponse({ status: 201, description: 'Successfully Processed' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  @Roles(UserRoles.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async create(
+    @Body() createAssesmentDto: CreateAssesmentDto,
+    @Res() res: Response,
+  ): Promise<any> {
+    try {
+      const assessment = await this.assesmentService.createAssessment(
+        createAssesmentDto,
+      );
+      return this.responseService.json(
+        res,
+        201,
+        'Assessment created Successfully',
+        assessment,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
   @ApiResponse({
     status: 200,
     description: 'Assessment Successfully retreived',

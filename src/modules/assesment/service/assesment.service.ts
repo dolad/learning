@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { CreateAssesmentDto } from '../dto/create-assesment.dto';
 import {
   UpdateAssesmentDto,
@@ -22,6 +22,7 @@ export class AssesmentService {
     private readonly assessmentModel: Model<IAssesments>,
     @InjectModel(QUESTION)
     private readonly questionModel: Model<IQuestion>,
+    @Inject(forwardRef(() => QuestionService))
     private readonly questionServices: QuestionService,
     private readonly userServices: UserService,
   ) {}
@@ -52,12 +53,11 @@ export class AssesmentService {
     const userIds = allUser.map((user) => user.id);
     assesment.users = userIds;
     const asses = await assesment.save();
-    console.log('asses', asses);
+    console.log('question', createAssesmentDto.question);
     const question = await this.questionServices.createQuestion(
       asses._id,
-      createAssesmentDto.questions,
+      createAssesmentDto.question,
     );
-    console.log('question', question);
     // create question
     return question;
   }
@@ -79,7 +79,6 @@ export class AssesmentService {
     await this.userServices.updateSelectedUsersWithAssesment(update, userIds);
     assesment.users = userIds;
     const ass = await assesment.save();
-
     const question = await this.questionServices.createQuestion(
       ass._id,
       createAssesmentDto.questions,

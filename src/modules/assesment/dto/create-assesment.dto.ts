@@ -53,8 +53,8 @@ export class CreateAssesmentDto {
   @ApiPropertyOptional()
   users: [];
 
-  @IsObject()
+  @IsArray()
   @IsNotEmpty()
   @ApiPropertyOptional()
-  questions: Array<any>;
+  question: Array<any>;
 }
