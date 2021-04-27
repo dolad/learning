@@ -25,8 +25,8 @@ export class CreateAssesmentDto {
 
   @IsString()
   @IsNotEmpty()
-  @ApiProperty()
-  assesment_type: AssesmentType;
+  @ApiPropertyOptional()
+  assesment_type?: AssesmentType;
 
   @IsBoolean()
   @IsOptional()

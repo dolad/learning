@@ -9,7 +9,8 @@ export interface IDuration {
 export interface IAssesments extends Document {
   name: string;
   instruction: string;
-  month?: Date;
+  start_date?: Date;
+  end_date?: Date;
   is_enabled: boolean;
   questions: [];
   durations: IDuration;
