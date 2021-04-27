@@ -26,7 +26,6 @@ export class Question {
   })
   @Prop({
     type: String,
-    unique: true,
   })
   question: string;
   @ApiProperty({
