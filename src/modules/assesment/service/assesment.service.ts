@@ -53,12 +53,16 @@ export class AssesmentService {
     const userIds = allUser.map((user) => user.id);
     assesment.users = userIds;
     const asses = await assesment.save();
-    console.log('question', createAssesmentDto.question);
+    const trasformedArray = createAssesmentDto.question.map((item) => {
+      const newObj = { ...item };
+      newObj.assesment_id = asses._id;
+      return newObj;
+    });
+    console.log(trasformedArray);
     const question = await this.questionServices.createQuestion(
       asses._id,
-      createAssesmentDto.question,
+      trasformedArray,
     );
-    // create question
     return question;
   }
 
@@ -83,8 +87,6 @@ export class AssesmentService {
       ass._id,
       createAssesmentDto.questions,
     );
-    console.log('question', question);
-    // create question
     return question;
   }
 
