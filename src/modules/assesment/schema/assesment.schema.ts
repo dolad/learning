@@ -35,7 +35,7 @@ export class Assessment {
   @Prop({
     type: String,
   })
-  instruction: string;
+  instruction?: string;
   @ApiProperty({
     type: Date,
     description: 'start_date',
@@ -84,14 +84,14 @@ export class Assessment {
   durations?: IDuration;
 
   @Prop({
-    type: String,
+    type: Number,
     default: null,
   })
   @ApiProperty({
-    type: String,
+    type: Number,
     description: 'score',
   })
-  score?: string;
+  score?: number;
   @ApiProperty({
     type: String,
     description: 'Assesment_status',
