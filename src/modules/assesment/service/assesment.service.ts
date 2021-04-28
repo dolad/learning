@@ -157,7 +157,7 @@ export class AssesmentService {
       const filter = { _id: id };
       const update = {
         $set: {
-          score: `${percentage}%`,
+          score: percentage,
           completed_at: Date.now(),
           status: AssesmentStatus.Completed,
           is_enabled: false,
