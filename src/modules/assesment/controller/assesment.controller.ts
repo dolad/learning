@@ -29,6 +29,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { RolesGuard } from 'src/modules/users/roles.guard';
 import { Roles } from 'src/modules/users/decorator/roles.decorator';
 import { UserRoles } from 'src/common';
+import { AuthUserDecorator } from 'src/modules/users/decorator/user.decorator';
 
 @ApiBearerAuth()
 @Controller('assesment')
@@ -197,14 +198,23 @@ export class AssesmentController {
   }
 
   @Patch('submit-assesment/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiResponse({
+    status: 200,
+    description: 'Assessment Successfully Processed',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async submitAssesment(
     @Param('id') id: string,
     @Body() updateAssesmentDto: SubmittingAssesment,
+    @AuthUserDecorator() authUser: any,
     @Res() res: Response,
   ) {
     try {
+      console.log(authUser);
       const ass = await this.assesmentService.submitAssesment(
         id,
+        authUser.userId,
         updateAssesmentDto,
       );
       if (!ass) {

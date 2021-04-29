@@ -82,27 +82,6 @@ export class Assessment {
     description: 'durations',
   })
   durations?: IDuration;
-
-  @Prop({
-    type: Number,
-    default: null,
-  })
-  @ApiProperty({
-    type: Number,
-    description: 'score',
-  })
-  score?: number;
-  @ApiProperty({
-    type: String,
-    description: 'Assesment_status',
-  })
-  @Prop({
-    type: String,
-    enum: AssesmentStatus,
-    default: AssesmentStatus.Inactive,
-  })
-  status?: string;
-
   @ApiProperty({
     type: String,
     description: 'Assesment_type',
@@ -113,11 +92,6 @@ export class Assessment {
     default: AssesmentType.General,
   })
   assesment_type?: string;
-  @Prop({
-    type: Date,
-    default: null,
-  })
-  completed_at?: Date;
   @ApiProperty({
     type: String,
     description: 'User Object',
