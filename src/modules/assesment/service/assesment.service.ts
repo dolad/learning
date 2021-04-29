@@ -11,6 +11,8 @@ import { calculatePercentage } from 'src/util/compareAnswer';
 import { IQuestion } from '../interface/question.schema';
 import { UserService } from '../../users/service/users.service';
 import { QuestionService } from './question.service';
+import { UserAssesmentService } from 'src/modules/users/service/user_assesment.service';
+import { IUserAssesment } from 'src/modules/users/interfaces/user_assesment.interface';
 
 @Injectable()
 export class AssesmentService {
@@ -22,6 +24,8 @@ export class AssesmentService {
     @Inject(forwardRef(() => QuestionService))
     private readonly questionServices: QuestionService,
     private readonly userServices: UserService,
+    @Inject(forwardRef(() => UserAssesmentService))
+    private readonly userAssesmentService: UserAssesmentService,
   ) {}
   async createAssessment(
     createAssesmentDto: CreateAssesmentDto,
@@ -32,12 +36,29 @@ export class AssesmentService {
     if (isEmpty(check)) {
       const createAssesment =
         createAssesmentDto.assesment_type === 'general'
-          ? await this.createAssesmentForAllUser(createAssesmentDto)
+          ? await this.createAssesment(createAssesmentDto)
           : await this.createAssesmentForSelectedUser(createAssesmentDto);
       return createAssesment;
     } else {
       throw new Error(`Assessment  [${createAssesmentDto.name}] already exist`);
     }
+  }
+
+  private async createAssesment(createAssesmentDto): Promise<any> {
+    const assesment: IAssesments = new this.assessmentModel(createAssesmentDto);
+    await assesment.save();
+    const allUser = await this.userServices.findAll();
+    const userAssesmentTable = allUser.map((user) => {
+      return { assesments_id: assesment._id, user_id: user._id };
+    });
+    const userAss = await this.userAssesmentService.create(userAssesmentTable);
+    const transformedArray = createAssesmentDto.question.map((item) => {
+      const newObj = { ...item };
+      newObj.assesment_id = assesment._id;
+      return newObj;
+    });
+    await this.questionServices.createQuestion(assesment._id, transformedArray);
+    return userAss;
   }
 
   private async createAssesmentForAllUser(createAssesmentDto): Promise<any> {
@@ -137,37 +158,14 @@ export class AssesmentService {
   }
 
   async submitAssesment(
-    id: string,
+    assess_id: string,
+    auth_id,
     assesment: SubmittingAssesment,
   ): Promise<any> {
-    const getAssesment = await this.findOne(id);
-    if (!isEmpty(getAssesment.questions)) {
-      const answer2: Array<any> = assesment.data;
-      const allQuestion = await this.questionModel.find({ assesment_id: id });
-      const correctAnswer = allQuestion.filter((o1) =>
-        answer2.some(
-          (o2) =>
-            o1.id === o2.question &&
-            o1.answer.toLowerCase() === o2.answer.toLowerCase(),
-        ),
-      );
-      const result = correctAnswer ? correctAnswer.length : 0;
-      const totalQuestion = allQuestion ? allQuestion.length : 0;
-      const percentage = calculatePercentage(result, totalQuestion);
-      const filter = { _id: id };
-      const update = {
-        $set: {
-          score: percentage,
-          completed_at: Date.now(),
-          status: AssesmentStatus.Completed,
-          is_enabled: false,
-        },
-      };
-      return await this.updateWithFilter(filter, update);
-    } else {
-      throw new Error(
-        `Assesment with this [${id}] does not have any question yet please populate`,
-      );
-    }
+    return await this.userAssesmentService.submitAssesment(
+      assess_id,
+      auth_id,
+      assesment,
+    );
   }
 }

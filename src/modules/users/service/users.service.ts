@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Model, Query } from 'mongoose';
-import { USER } from 'src/common';
+import { USER, USER_ASSESMENT } from 'src/common';
 import { isEmpty } from 'lodash';
 import { InjectModel } from '@nestjs/mongoose';
 import { IUser } from '../interfaces/user.interfaces';
@@ -28,7 +28,6 @@ export class UserService {
     ids: Array<string>,
   ): Promise<any> {
     const option = { upsert: true };
-    console.log('ids', ids);
     const updatedUsers = await this.userModel.updateMany(
       { _id: { $in: ids } },
       update,

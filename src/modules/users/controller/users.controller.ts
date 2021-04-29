@@ -24,12 +24,14 @@ import { UserRoles } from 'src/common';
 import { Roles } from '../decorator/roles.decorator';
 import { RolesGuard } from '../roles.guard';
 import { MakeAdmin } from '../dto/user.dto';
+import { UserAssesmentService } from '../service/user_assesment.service';
 @ApiBearerAuth()
 @ApiTags('Users')
 @Controller('users')
 export class UserController {
   constructor(
     private readonly userService: UserService,
+    private readonly userAssesmentService: UserAssesmentService,
     private readonly responseService: ResponseService,
   ) {}
 
@@ -72,7 +74,7 @@ export class UserController {
     @Res() res: Response,
   ): Promise<any> {
     try {
-      const user = await this.userService.findAndFilterWithAssesment(
+      const user = await this.userAssesmentService.findWithUserID(
         authUser.userId,
         req.query,
       );
