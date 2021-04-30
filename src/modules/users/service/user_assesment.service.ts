@@ -72,7 +72,6 @@ export class UserAssesmentService {
       const allQuestion = await this.questionService.getWithAssessmentID(
         assesment_id,
       );
-      console.log(allQuestion);
       const correctAnswer = allQuestion.filter((o1) =>
         answer2.some(
           (o2) =>
@@ -99,7 +98,7 @@ export class UserAssesmentService {
     }
   }
   async updateWithFilter(filter: any, update: any): Promise<any> {
-    const option = { upsert: true, returnNewDocument: true };
+    const option = { upsert: true, new: true };
     return await this.userAssesmentModel.findOneAndUpdate(
       filter,
       update,

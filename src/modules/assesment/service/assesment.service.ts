@@ -76,7 +76,6 @@ export class AssesmentService {
       newObj.assesment_id = asses._id;
       return newObj;
     });
-    console.log(trasformedArray);
     const question = await this.questionServices.createQuestion(
       asses._id,
       trasformedArray,
