@@ -1,15 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { Model, Query } from 'mongoose';
-import { USER, USER_ASSESMENT } from 'src/common';
+import { BRANCH, DEPARTMENT, USER, USER_ASSESMENT } from 'src/common';
 import { isEmpty } from 'lodash';
 import { InjectModel } from '@nestjs/mongoose';
 import { IUser } from '../interfaces/user.interfaces';
 import { QueryOptions } from '../../../common/query';
+import { IBranch, IDepartment } from '../interfaces/department.interface';
+import { ErpClass } from 'src/modules/auth/service/ErpService';
+
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(USER)
     private readonly userModel: Model<IUser>,
+    @InjectModel(DEPARTMENT)
+    private readonly departmentModel: Model<IDepartment>,
+    @InjectModel(BRANCH)
+    private readonly branchModel: Model<IBranch>,
   ) {}
   async findAll(query?: any): Promise<IUser[]> {
     const queryUser = !query
@@ -68,5 +75,34 @@ export class UserService {
       },
     };
     return await this.updateWithFilter(filter, update);
+  }
+  async getDepartment(): Promise<any> {
+    try {
+      return await this.departmentModel.find();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async saveDepartment(): Promise<any> {
+    const erpService = new ErpClass();
+    const department = await erpService.fetchDepartment();
+    let newDepartment: any;
+    try {
+      newDepartment = await this.departmentModel.insertMany(department.data);
+    } catch (error) {
+      console.log(error);
+    }
+    return newDepartment;
+  }
+  async saveBranches(): Promise<any> {
+    const erpService = new ErpClass();
+    const branches = await erpService.fetchBranch();
+    // let newDepartment: any;
+    // try {
+    //   newDepartment = await this.branchModel.insertMany(department.data);
+    // } catch (error) {
+    //   console.log(error);
+    // }
+    return branches;
   }
 }

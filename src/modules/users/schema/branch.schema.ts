@@ -2,11 +2,11 @@ import * as mongoose from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-export type DepartmentDocument = Department & mongoose.Document;
+export type BranchDocument = Branch & mongoose.Document;
 
 @Schema({
   timestamps: true,
-  collection: 'department',
+  collection: 'branch',
   toJSON: {
     virtuals: true,
     transform: (_doc: any, ret: any): void => {
@@ -15,24 +15,24 @@ export type DepartmentDocument = Department & mongoose.Document;
     },
   },
 })
-export class Department {
+export class Branch {
   @ApiProperty({
     type: String,
-    description: 'description',
+    description: 'id',
   })
   @Prop({
     type: String,
     unique: true,
   })
-  description?: string;
+  id?: string;
   @ApiProperty({
     type: String,
-    description: 'title',
+    description: 'name',
   })
   @Prop({
     type: String,
   })
-  title: string;
+  name: string;
 }
 
-export const DepartmentSchema = SchemaFactory.createForClass(Department);
+export const BranchSchema = SchemaFactory.createForClass(Branch);

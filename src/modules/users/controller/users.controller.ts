@@ -160,4 +160,50 @@ export class UserController {
       return this.responseService.json(res, error);
     }
   }
+
+  @Get('all/departments')
+  @ApiResponse({
+    status: 200,
+    description: 'Departments Successfully retrieved',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  async getAllDepartment(@Res() res: Response): Promise<any> {
+    try {
+      const department = await this.userService.getDepartment();
+      if (!department) {
+        throw new HttpException('No department found', HttpStatus.NOT_FOUND);
+      }
+      return this.responseService.json(
+        res,
+        200,
+        'department retrieved successfully',
+        department,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
+
+  @Get('all/branches')
+  @ApiResponse({
+    status: 200,
+    description: 'Branches Successfully retrieved',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  async getAllBranches(@Res() res: Response): Promise<any> {
+    try {
+      const branches = await this.userService.saveBranches();
+      if (!branches) {
+        throw new HttpException('No branches found', HttpStatus.NOT_FOUND);
+      }
+      return this.responseService.json(
+        res,
+        200,
+        'branches retrieved successfully',
+        branches,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
 }

@@ -12,7 +12,7 @@ import { Response } from 'express';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from '../service/auth.service';
 import { ResponseService } from 'src/shared/response.service';
-import { loginEmployeeDto } from '../dto/employee.dto';
+import { loginEmployeeDto, registerEmployeeDto } from '../dto/employee.dto';
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
@@ -33,6 +33,28 @@ export class AuthController {
         res,
         200,
         'Fetch Successfully',
+        response,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
+  @ApiResponse({
+    status: 200,
+    description: 'Registration successfully',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  @Post('register')
+  async registerEmployee(
+    @Res() res: Response,
+    @Body() login: registerEmployeeDto,
+  ): Promise<any> {
+    try {
+      const response = await this.authService.register(login);
+      return this.responseService.json(
+        res,
+        200,
+        'Registration Successfully',
         response,
       );
     } catch (error) {

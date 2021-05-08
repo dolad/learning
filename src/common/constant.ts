@@ -9,3 +9,4 @@ export const ASSESSMENT = 'Assessment';
 export const OPTION = 'Option';
 export const USER_ASSESMENT = 'User_Assesments';
 export const USER_COURSE = 'UserCourse';
+export const BRANCH = 'Branch';

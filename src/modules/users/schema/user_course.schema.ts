@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { AssesmentStatus, ASSESSMENT, USER } from 'src/common';
+import { AssesmentStatus, ASSESSMENT, COURSE, USER } from 'src/common';
 
 export type UserCourse = User_Course & mongoose.Document;
 
@@ -33,11 +33,11 @@ export class User_Course {
   user_id: string;
   @ApiProperty({
     type: String,
-    description: 'assesment_id',
+    description: 'course_id',
   })
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
-    ref: ASSESSMENT,
+    ref: COURSE,
   })
   assesments_id: string;
   @ApiProperty({

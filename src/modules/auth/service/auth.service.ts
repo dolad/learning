@@ -8,6 +8,12 @@ import { JwtService } from '@nestjs/jwt';
 import { isEmpty } from 'lodash';
 import { comparePassword } from 'src/util/comparePassword';
 import { replaceEmail } from 'src/util/filter';
+import {
+  registerEmployeeDto,
+  resetEmployeePasswordDto,
+} from '../dto/employee.dto';
+import * as bcrypt from 'bcryptjs';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -30,9 +36,8 @@ export class AuthService {
   }
 
   async validatedUser(employeeLogin): Promise<any> {
-    const convertedEmail = replaceEmail(employeeLogin.email);
     const employee = await this.userModel.findOne({
-      email: convertedEmail,
+      email: employeeLogin.email,
     });
     if (isEmpty(employee)) {
       throw new Error('Employee not registered');
@@ -47,7 +52,6 @@ export class AuthService {
   async login(employeeLogin): Promise<any> {
     const employee = await this.validatedUser(employeeLogin);
     if (employee !== false) {
-      console.log(employee);
       const access_token = this.jwtService.sign({
         username: employee.email,
         sub: employee._id,
@@ -59,5 +63,44 @@ export class AuthService {
     } else {
       throw new Error('Invalid login details');
     }
+  }
+
+  async register(employeeRegister: registerEmployeeDto): Promise<any> {
+    const employee = await this.userModel.findOne({
+      email: employeeRegister.email,
+    });
+    if (!isEmpty(employee)) {
+      throw new Error('Employee already registered');
+    }
+    const hash = bcrypt.hashSync(employeeRegister.password, 10);
+    const newEmployee = await this.userModel.create({
+      email: employeeRegister.email,
+      last_name: employeeRegister.last_name,
+      first_name: employeeRegister.first_name,
+      password: hash,
+      department: employeeRegister.department,
+      branch: employeeRegister.branch,
+    });
+
+    return newEmployee;
+  }
+
+  async resetPassword(employeeInput: resetEmployeePasswordDto): Promise<any> {
+    const employee = await this.userModel.findOne({
+      email: employeeInput.email,
+    });
+    if (isEmpty(employee)) {
+      throw new Error('employee not register on this platforms');
+    }
+    const hash = bcrypt.hashSync(employeeInput.password, 10);
+    const filter = { email: employeeInput.email };
+    const update = {
+      $set: {
+        password: hash,
+      },
+    };
+    const option = { upsert: true, new: true };
+    await this.userModel.findOneAndUpdate(filter, update, option);
+    return 'password has been updated succesfully';
   }
 }
