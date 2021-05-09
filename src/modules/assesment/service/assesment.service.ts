@@ -7,12 +7,10 @@ import { IAssesments } from '../interface/assessment.schema';
 import { isEmpty } from 'lodash';
 import { InjectModel } from '@nestjs/mongoose';
 import { readBuffer, convertToSave } from 'src/shared/files/readExcel';
-import { calculatePercentage } from 'src/util/compareAnswer';
 import { IQuestion } from '../interface/question.schema';
 import { UserService } from '../../users/service/users.service';
 import { QuestionService } from './question.service';
 import { UserAssesmentService } from 'src/modules/users/service/user_assesment.service';
-import { IUserAssesment } from 'src/modules/users/interfaces/user_assesment.interface';
 
 @Injectable()
 export class AssesmentService {
@@ -36,7 +34,7 @@ export class AssesmentService {
     if (isEmpty(check)) {
       const createAssesment =
         createAssesmentDto.assesment_type === 'general'
-          ? await this.createAssesment(createAssesmentDto)
+          ? await this.createAssesmentTest(createAssesmentDto)
           : await this.createAssesmentForSelectedUser(createAssesmentDto);
       return createAssesment;
     } else {
@@ -44,67 +42,85 @@ export class AssesmentService {
     }
   }
 
-  private async createAssesment(createAssesmentDto): Promise<any> {
-    const assesment: IAssesments = new this.assessmentModel(createAssesmentDto);
-    await assesment.save();
-    const allUser = await this.userServices.findAll();
-    const userAssesmentTable = allUser.map((user) => {
-      return { assesments_id: assesment._id, user_id: user._id };
-    });
-    const userAss = await this.userAssesmentService.create(userAssesmentTable);
-    const transformedArray = createAssesmentDto.question.map((item) => {
-      const newObj = { ...item };
-      newObj.assesment_id = assesment._id;
-      return newObj;
-    });
-    await this.questionServices.createQuestion(assesment._id, transformedArray);
-    return userAss;
-  }
-
-  private async createAssesmentForAllUser(createAssesmentDto): Promise<any> {
-    const assesment: IAssesments = new this.assessmentModel(createAssesmentDto);
-    const update = {
-      $push: { assesments: assesment.id },
-    };
-    await this.userServices.updateAllUserDocument(update);
-    const allUser = await this.userServices.findAll();
-    const userIds = allUser.map((user) => user.id);
-    assesment.users = userIds;
-    const asses = await assesment.save();
-    const trasformedArray = createAssesmentDto.question.map((item) => {
-      const newObj = { ...item };
-      newObj.assesment_id = asses._id;
-      return newObj;
-    });
-    const question = await this.questionServices.createQuestion(
-      asses._id,
-      trasformedArray,
-    );
-    return question;
+  private async createAssesmentTest(createAssesmentDto): Promise<any> {
+    const session = await this.assessmentModel.db.startSession();
+    try {
+      await session.withTransaction(async () => {
+        const assesment: IAssesments = new this.assessmentModel(
+          createAssesmentDto,
+        );
+        assesment.$session(session);
+        const allUser = await this.userServices.findAll();
+        const userAssesmentTable = allUser.map((user) => {
+          return { assesments_id: assesment._id, user_id: user._id };
+        });
+        const userAss = await this.userAssesmentService.createWithSession(
+          userAssesmentTable,
+          session,
+        );
+        const transformedArray = createAssesmentDto.question.map((item) => {
+          const newObj = { ...item };
+          newObj.assesment_id = assesment._id;
+          return newObj;
+        });
+        await this.questionServices.createQuestionWithSession(
+          assesment._id,
+          transformedArray,
+          session,
+        );
+        return userAss;
+      });
+    } catch (error) {
+      throw new Error(
+        `Assessment  [${createAssesmentDto.name}] cant be created`,
+      );
+    } finally {
+      await session.endSession();
+    }
   }
 
   private async createAssesmentForSelectedUser(
     createAssesmentDto,
   ): Promise<any> {
-    const assesment: IAssesments = new this.assessmentModel(createAssesmentDto);
-    const update = {
-      $push: { assesments: assesment.id },
-    };
+    const session = await this.assessmentModel.db.startSession();
     if (!createAssesmentDto.users) {
       throw new Error(` you have not selecteed any user`);
     }
-    const allUser = await this.userServices.findArrayOfSelecteduser(
-      createAssesmentDto.users,
-    );
-    const userIds = allUser.map((user) => user.id);
-    await this.userServices.updateSelectedUsersWithAssesment(update, userIds);
-    assesment.users = userIds;
-    const ass = await assesment.save();
-    const question = await this.questionServices.createQuestion(
-      ass._id,
-      createAssesmentDto.questions,
-    );
-    return question;
+    try {
+      await session.withTransaction(async () => {
+        const assesment: IAssesments = new this.assessmentModel(
+          createAssesmentDto,
+        );
+        assesment.$session(session);
+        const allUser = await this.userServices.findArrayOfSelecteduser(
+          createAssesmentDto.users,
+        );
+        const userAssesmentTable = allUser.map((user) => {
+          return { assesments_id: assesment._id, user_id: user._id };
+        });
+        const userAss = await this.userAssesmentService.createWithSession(
+          userAssesmentTable,
+          session,
+        );
+        const transformedArray = createAssesmentDto.question.map((item) => {
+          const newObj = { ...item };
+          newObj.assesment_id = assesment._id;
+          return newObj;
+        });
+        await this.questionServices.createQuestionWithSession(
+          assesment._id,
+          transformedArray,
+          session,
+        );
+        return userAss;
+      });
+    } catch (error) {
+      throw new Error(
+        `Assessment  [${createAssesmentDto.name}] cant be created`,
+      );
+    } finally {
+      await session.endSession();
+    }
   }
 
   async findAll(): Promise<IAssesments[]> {
@@ -114,17 +130,6 @@ export class AssesmentService {
     return await this.assessmentModel.findById(id);
   }
 
-  // async update(
-  //   id: string,
-  //   assesment: UpdateAssesmentDto,
-  // ): Promise<IAssesments> {
-  //   const payload = await this.assessmentModel.findOneAndUpdate(
-  //     { _id: id },
-  //     { $set: assesment },
-  //     { upsert: true, new: true },
-  //   );
-  //   return payload;
-  // }
   async remove(id: string): Promise<IAssesments> {
     return await this.assessmentModel.findByIdAndDelete(id);
   }

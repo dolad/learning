@@ -1,7 +1,14 @@
 import * as mongoose from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ASSESSMENT, UserRoles, UserTypes } from 'src/common';
+import {
+  ASSESSMENT,
+  BRANCH,
+  COURSE,
+  DEPARTMENT,
+  UserRoles,
+  UserTypes,
+} from 'src/common';
 
 export type UserDocument = User & mongoose.Document;
 
@@ -61,13 +68,13 @@ export class User {
   last_name?: string;
   @ApiProperty({
     type: String,
-    description: 'branch',
+    description: 'Branch Object',
   })
   @Prop({
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: BRANCH,
   })
-  branch?: string;
-
+  branch_id?: string;
   @ApiProperty({
     type: String,
     description: 'gender',
@@ -106,13 +113,13 @@ export class User {
 
   @ApiProperty({
     type: String,
-    description: 'department_id',
+    description: 'Department Object',
   })
   @Prop({
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: DEPARTMENT,
   })
   department_id?: string;
-
   @ApiProperty({
     type: String,
     description: 'confirm_status',
@@ -156,6 +163,17 @@ export class User {
     },
   ])
   assesments?: [];
+  @ApiProperty({
+    type: String,
+    description: 'Course Object',
+  })
+  @Prop([
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: COURSE,
+    },
+  ])
+  courses?: [];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -13,19 +13,35 @@ export class UserAssesmentService {
     private readonly userAssesmentModel: Model<IUserAssesment>,
     private readonly questionService: QuestionService,
   ) {}
-  async create(assesment: Array<any>): Promise<IUserAssesment[]> {
+  async createWithSession(
+    assesment: Array<any>,
+    session: any,
+  ): Promise<IUserAssesment[]> {
     try {
-      return await this.userAssesmentModel.insertMany(assesment);
+      const userAsses = await this.userAssesmentModel.insertMany(assesment, {
+        session,
+      });
+      return userAsses;
     } catch (error) {
       throw new Error(`Cant user_assesment table`);
     }
   }
+  async create(assesment: Array<any>): Promise<IUserAssesment[]> {
+    try {
+      const userAsses = await this.userAssesmentModel.insertMany(assesment);
+      return userAsses;
+    } catch (error) {
+      throw new Error(`Cant user_assesment table`);
+    }
+  }
+
   async findAll(query?: any): Promise<IUserAssesment[]> {
     const queryUser = !query
       ? await this.userAssesmentModel.find()
       : await this.userAssesmentModel.find({ ...query });
     return queryUser;
   }
+
   async findWithUserID(userID: string, query?: any): Promise<IUserAssesment[]> {
     const queryUser = !query
       ? await this.userAssesmentModel
@@ -36,6 +52,7 @@ export class UserAssesmentService {
           .populate('assesments_id');
     return queryUser;
   }
+
   async findWithAssesmentID(assesments_id: string): Promise<IUserAssesment[]> {
     return await this.userAssesmentModel
       .find({ assesments_id: assesments_id })
@@ -98,7 +115,7 @@ export class UserAssesmentService {
     }
   }
   async updateWithFilter(filter: any, update: any): Promise<any> {
-    const option = { upsert: true, new: true };
+    const option = { upsert: true, returnNewDocument: true, new: true };
     return await this.userAssesmentModel.findOneAndUpdate(
       filter,
       update,

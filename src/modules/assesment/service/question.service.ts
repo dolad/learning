@@ -29,6 +29,26 @@ export class QuestionService {
     );
     return updatedCourseModule;
   }
+  public async createQuestionWithSession(
+    id: string,
+    questionDto: any,
+    session: any,
+  ): Promise<any> {
+    const question: any = await this.questionModel.insertMany(
+      questionDto,
+      session,
+    );
+    const question_ids = question.map((ques) => ques.id);
+    const update = {
+      $push: { questions: question_ids },
+    };
+    const filter = { _id: id };
+    const updatedCourseModule = await this.assesmentService.updateQuestion(
+      filter,
+      update,
+    );
+    return updatedCourseModule;
+  }
   async updateQuestion(
     id: string,
     question: UpdateQuestionDto,
