@@ -97,12 +97,12 @@ export class UserService {
   async saveBranches(): Promise<any> {
     const erpService = new ErpClass();
     const branches = await erpService.fetchBranch();
-    // let newDepartment: any;
-    // try {
-    //   newDepartment = await this.branchModel.insertMany(department.data);
-    // } catch (error) {
-    //   console.log(error);
-    // }
-    return branches;
+    let newBranch: any;
+    try {
+      newBranch = await this.branchModel.insertMany(branches.data);
+    } catch (error) {
+      console.log(error);
+    }
+    return newBranch;
   }
 }

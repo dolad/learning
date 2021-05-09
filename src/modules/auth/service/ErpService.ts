@@ -20,6 +20,6 @@ export class ErpClass extends ApiRequest {
     return await this.fetchRequest(`alldepts`, 'GET');
   }
   async fetchBranch(): Promise<any> {
-    return await this.fetchRequest(`allbranche`, 'GET');
+    return await this.fetchRequest(`getBranches`, 'GET');
   }
 }

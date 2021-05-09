@@ -18,21 +18,21 @@ export type BranchDocument = Branch & mongoose.Document;
 export class Branch {
   @ApiProperty({
     type: String,
-    description: 'id',
+    description: 'state',
   })
   @Prop({
     type: String,
     unique: true,
   })
-  id?: string;
+  state?: string;
   @ApiProperty({
     type: String,
-    description: 'name',
+    description: 'title',
   })
   @Prop({
     type: String,
   })
-  name: string;
+  title: string;
 }
 
 export const BranchSchema = SchemaFactory.createForClass(Branch);
