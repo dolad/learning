@@ -84,4 +84,27 @@ export class AuthController {
       return this.responseService.json(res, error);
     }
   }
+
+  @ApiResponse({
+    status: 200,
+    description: 'Passwrord Reset successfully',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  @Post('resetPassword')
+  async resetPassword(
+    @Res() res: Response,
+    @Body() login: loginEmployeeDto,
+  ): Promise<any> {
+    try {
+      const response = await this.authService.resetPassword(login);
+      return this.responseService.json(
+        res,
+        200,
+        'Password Reset Successfully',
+        response,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
 }

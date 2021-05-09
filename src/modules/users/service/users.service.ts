@@ -94,6 +94,15 @@ export class UserService {
     }
     return newDepartment;
   }
+
+  async getBranch(): Promise<any> {
+    try {
+      return await this.branchModel.find();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async saveBranches(): Promise<any> {
     const erpService = new ErpClass();
     const branches = await erpService.fetchBranch();

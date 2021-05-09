@@ -36,7 +36,7 @@ export class UserController {
   ) {}
 
   @Post('make-admin')
-  @Roles(UserRoles.Admin)
+  // @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async makeAdmin(
     @Body() email: MakeAdmin,
@@ -192,7 +192,7 @@ export class UserController {
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async getAllBranches(@Res() res: Response): Promise<any> {
     try {
-      const branches = await this.userService.saveBranches();
+      const branches = await this.userService.getBranch();
       if (!branches) {
         throw new HttpException('No branches found', HttpStatus.NOT_FOUND);
       }

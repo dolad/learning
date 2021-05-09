@@ -12,20 +12,14 @@ import {
   ValidationPipe,
   HttpException,
   HttpStatus,
-  UseInterceptors,
-  UploadedFile,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { AssesmentService } from '../service/assesment.service';
 import { CreateAssesmentDto } from '../dto/create-assesment.dto';
-import {
-  SubmittingAssesment,
-  UpdateAssesmentDto,
-} from '../dto/update-assesment.dto';
+import { SubmittingAssesment } from '../dto/update-assesment.dto';
 import { ResponseService } from 'src/shared/response.service';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
 import { Response } from 'express';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { RolesGuard } from 'src/modules/users/roles.guard';
 import { Roles } from 'src/modules/users/decorator/roles.decorator';
 import { UserRoles } from 'src/common';
@@ -64,6 +58,7 @@ export class AssesmentController {
       return this.responseService.json(res, error);
     }
   }
+
   @ApiResponse({
     status: 200,
     description: 'Assessment Successfully retreived',
