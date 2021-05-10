@@ -11,6 +11,7 @@ import { IQuestion } from '../interface/question.schema';
 import { UserService } from '../../users/service/users.service';
 import { QuestionService } from './question.service';
 import { UserAssesmentService } from 'src/modules/users/service/user_assesment.service';
+import { create } from 'node:domain';
 
 @Injectable()
 export class AssesmentService {
@@ -46,7 +47,7 @@ export class AssesmentService {
     const session = await this.assessmentModel.db.startSession();
     try {
       await session.withTransaction(async () => {
-        const assesment: IAssesments = new this.assessmentModel(
+        const assesment: IAssesments = await this.assessmentModel.create(
           createAssesmentDto,
         );
         assesment.$session(session);
@@ -58,6 +59,7 @@ export class AssesmentService {
           userAssesmentTable,
           session,
         );
+
         const transformedArray = createAssesmentDto.question.map((item) => {
           const newObj = { ...item };
           newObj.assesment_id = assesment._id;
@@ -71,6 +73,7 @@ export class AssesmentService {
         return userAss;
       });
     } catch (error) {
+      console.log(error.message);
       throw new Error(
         `Assessment  [${createAssesmentDto.name}] cant be created`,
       );
@@ -82,7 +85,7 @@ export class AssesmentService {
   private async createAssesmentForSelectedUser(
     createAssesmentDto,
   ): Promise<any> {
-    const session = await this.assessmentModel.db.startSession();
+    const session = await this.assessmentModel.startSession();
     if (!createAssesmentDto.users) {
       throw new Error(` you have not selecteed any user`);
     }
@@ -119,6 +122,7 @@ export class AssesmentService {
         `Assessment  [${createAssesmentDto.name}] cant be created`,
       );
     } finally {
+      await session.commitTransaction();
       await session.endSession();
     }
   }

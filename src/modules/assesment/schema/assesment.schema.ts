@@ -25,7 +25,6 @@ export class Assessment {
   })
   @Prop({
     type: String,
-    unique: true,
   })
   name: string;
   @ApiProperty({
