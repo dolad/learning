@@ -11,7 +11,6 @@ import { IQuestion } from '../interface/question.schema';
 import { UserService } from '../../users/service/users.service';
 import { QuestionService } from './question.service';
 import { UserAssesmentService } from 'src/modules/users/service/user_assesment.service';
-import { create } from 'node:domain';
 
 @Injectable()
 export class AssesmentService {
@@ -26,6 +25,7 @@ export class AssesmentService {
     @Inject(forwardRef(() => UserAssesmentService))
     private readonly userAssesmentService: UserAssesmentService,
   ) {}
+
   async createAssessment(
     createAssesmentDto: CreateAssesmentDto,
   ): Promise<IAssesments> {

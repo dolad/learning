@@ -125,7 +125,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   async getAllUsers(@Res() res: Response, @Req() req): Promise<any> {
     try {
-      const users = await this.userService.findAll(req.query);
+      const users = await this.userService.findAllPaginate(req.query);
       return this.responseService.json(
         res,
         201,
