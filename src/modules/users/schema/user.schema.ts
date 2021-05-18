@@ -110,7 +110,6 @@ export class User {
     type: String,
   })
   date_of_birth?: string;
-
   @ApiProperty({
     type: String,
     description: 'Department Object',

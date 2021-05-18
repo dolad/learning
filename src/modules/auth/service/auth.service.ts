@@ -78,8 +78,8 @@ export class AuthService {
       last_name: employeeRegister.last_name,
       first_name: employeeRegister.first_name,
       password: hash,
-      department: employeeRegister.department,
-      branch: employeeRegister.branch,
+      department_id: employeeRegister.department,
+      branch_id: employeeRegister.branch,
     });
 
     return newEmployee;
