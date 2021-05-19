@@ -1,4 +1,4 @@
-import { IsString, IsInt, IsNotEmpty } from 'class-validator';
+import { IsString, IsOptional, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class MakeAdmin {
@@ -6,4 +6,26 @@ export class MakeAdmin {
   @IsNotEmpty()
   @ApiProperty()
   email: string;
+}
+
+export class UpdateUserDTO {
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  department_id?: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  branch_id?: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  gender?: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  phone_no?: string;
 }
