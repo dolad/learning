@@ -1,12 +1,11 @@
 import {
   IsString,
-  IsInt,
   IsNotEmpty,
   IsOptional,
   IsBoolean,
   IsDate,
 } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateLectureDto {
   @IsString()

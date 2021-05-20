@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { AssesmentStatus, USER, USER_ASSESMENT } from 'src/common';
+import { AssesmentStatus, USER_ASSESMENT } from 'src/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IUserAssesment } from '../interfaces/user_assesment.interface';
 import { SubmittingAssesment } from 'src/modules/assesment/dto/update-assesment.dto';

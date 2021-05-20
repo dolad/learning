@@ -8,8 +8,6 @@ import {
   Post,
   Get,
   Patch,
-  Delete,
-  ValidationPipe,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
@@ -36,7 +34,7 @@ export class UserController {
   ) {}
 
   @Post('make-admin')
-  // @Roles(UserRoles.Admin)
+  @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async makeAdmin(
     @Body() email: MakeAdmin,

@@ -2,9 +2,8 @@ import { Injectable, forwardRef } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { QUESTION } from 'src/common';
-import { CreateQuestionDto, UpdateQuestionDto } from '../dto/question.dto';
+import { UpdateQuestionDto } from '../dto/question.dto';
 import { IQuestion } from '../interface/question.schema';
-import { isEmpty } from 'lodash';
 import { AssesmentService } from './assesment.service';
 import { Inject } from '@nestjs/common';
 

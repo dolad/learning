@@ -2,9 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as helmet from 'helmet';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import CorsConfig from './cors.config';
 import { json, urlencoded } from 'express';
-import { ValidationPipe } from './shared/pipes/validation.pipes';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {

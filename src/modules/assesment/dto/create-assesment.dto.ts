@@ -10,7 +10,6 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IDuration } from '../interface/assessment.schema';
 import { AssesmentType } from 'src/common';
-import { IQuestion } from '../interface/question.schema';
 
 export class CreateAssesmentDto {
   @IsString()

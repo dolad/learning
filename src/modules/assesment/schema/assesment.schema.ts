@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { AssesmentStatus, AssesmentType, QUESTION, USER } from 'src/common';
+import { AssesmentType, QUESTION, USER } from 'src/common';
 import { IDuration } from '../interface/assessment.schema';
 
 export type AssessmentDocument = Assessment & Document;

@@ -7,7 +7,6 @@ import { ErpClass } from './ErpService';
 import { JwtService } from '@nestjs/jwt';
 import { isEmpty } from 'lodash';
 import { comparePassword } from 'src/util/comparePassword';
-import { replaceEmail } from 'src/util/filter';
 import {
   registerEmployeeDto,
   resetEmployeePasswordDto,
