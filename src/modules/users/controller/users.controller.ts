@@ -8,8 +8,6 @@ import {
   Post,
   Get,
   Patch,
-  Delete,
-  ValidationPipe,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
@@ -23,7 +21,7 @@ import { AuthUserDecorator } from '../decorator/user.decorator';
 import { UserRoles } from 'src/common';
 import { Roles } from '../decorator/roles.decorator';
 import { RolesGuard } from '../roles.guard';
-import { MakeAdmin } from '../dto/user.dto';
+import { MakeAdmin, UpdateUserDTO } from '../dto/user.dto';
 import { UserAssesmentService } from '../service/user_assesment.service';
 @ApiBearerAuth()
 @ApiTags('Users')
@@ -36,7 +34,7 @@ export class UserController {
   ) {}
 
   @Post('make-admin')
-  // @Roles(UserRoles.Admin)
+  @Roles(UserRoles.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async makeAdmin(
     @Body() email: MakeAdmin,
@@ -150,6 +148,34 @@ export class UserController {
       if (!user) {
         throw new HttpException(`No user with id ${id}`, HttpStatus.NOT_FOUND);
       }
+      return this.responseService.json(
+        res,
+        200,
+        'user retrieved successfully',
+        user,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
+
+  @Patch('update-profile')
+  @ApiResponse({
+    status: 200,
+    description: 'Users Successfully updated',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  @UseGuards(JwtAuthGuard)
+  async updateProfile(
+    @AuthUserDecorator() authUser: any,
+    @Body() updateUser: UpdateUserDTO,
+    @Res() res: Response,
+  ): Promise<any> {
+    try {
+      const user = await this.userService.updateUserProfile(
+        authUser.userId,
+        updateUser,
+      );
       return this.responseService.json(
         res,
         200,

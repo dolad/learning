@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IOptions } from '../interface/options.interface';
 import { ASSESSMENT } from 'src/common';
-import { Document, SchemaTypes } from 'mongoose';
+import { Document } from 'mongoose';
 
 export type QuestionDocument = Question & Document;
 

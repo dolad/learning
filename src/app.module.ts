@@ -21,6 +21,7 @@ import {
     MongooseModule.forRoot(configuration().database.test, {
       connectionFactory: (connection) => {
         connection.plugin(mongoosePaginate);
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         connection.plugin(require('mongoose-autopopulate'));
         return connection;
       },

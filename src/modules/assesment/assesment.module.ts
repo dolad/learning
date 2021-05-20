@@ -9,7 +9,6 @@ import { ResponseService } from '../../shared/response.service';
 import { QuestionService } from './service/question.service';
 import { QuestionController } from './controller/question.controller';
 import { UsersModule } from '../users/users.module';
-import { UserAssesmentService } from '../users/service/user_assesment.service';
 @Module({
   imports: [
     MongooseModule.forFeature([

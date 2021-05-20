@@ -6,7 +6,6 @@ import { AssesmentStatus, ASSESSMENT, QUESTION } from 'src/common';
 import { IAssesments } from '../interface/assessment.schema';
 import { isEmpty } from 'lodash';
 import { InjectModel } from '@nestjs/mongoose';
-import { readBuffer, convertToSave } from 'src/shared/files/readExcel';
 import { IQuestion } from '../interface/question.schema';
 import { UserService } from '../../users/service/users.service';
 import { QuestionService } from './question.service';
@@ -142,11 +141,6 @@ export class AssesmentService {
     return await this.assessmentModel
       .findOneAndUpdate(filter, update, option)
       .populate('questions');
-  }
-  async createViaExcel(file): Promise<any> {
-    const result = readBuffer(file);
-    const name = convertToSave(result);
-    return name;
   }
 
   async updateWithFilter(filter: any, update: any): Promise<any> {

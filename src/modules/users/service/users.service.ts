@@ -119,6 +119,14 @@ export class UserService {
     }
   }
 
+  async updateUserProfile(userId, userDetails): Promise<any> {
+    const filter = { _id: userId };
+    const update = {
+      $set: userDetails,
+    };
+    return await this.updateWithFilter(filter, update);
+  }
+
   async saveBranches(): Promise<any> {
     const erpService = new ErpClass();
     const branches = await erpService.fetchBranch();
