@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { COURSEMODULES } from 'src/common';
+import { SYLLABUS } from 'src/common';
 
 export type LectureDocument = Lecture & mongoose.Document;
 
@@ -75,14 +75,14 @@ export class Lecture {
   has_completed?: boolean;
   @ApiProperty({
     type: String,
-    description: 'Course Module Object',
+    description: 'Syllabus Object',
   })
   @Prop({
     type: mongoose.Schema.Types.ObjectId || String,
-    ref: COURSEMODULES,
+    ref: SYLLABUS,
     autopopulate: true,
   })
-  course_modules?: string;
+  syllabus_id?: string;
   @Prop({
     type: Boolean,
     default: false,

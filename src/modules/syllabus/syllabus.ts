@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { COURSE, COURSEMODULES } from 'src/common';
+import { COURSE, SYLLABUS } from 'src/common';
 import { ResponseService } from 'src/shared/response.service';
 import { CourseModule } from '../course/course.module';
 import { CourseSchema } from '../course/schema/course.schema';
 import { CourseService } from '../course/service/course.service';
 import { UsersModule } from '../users/users.module';
-import { CourseModuleController } from './controller/course-module.controller';
-import { CourseModuleSchema } from './schema/course-module.schema';
-import { CourseModuleService } from './service/course-module.service';
+import { SyllabusController } from './controller/course-module.controller';
+import { SyllabusSchema } from './schema/syllabus.schema';
+import { SyllabusService } from './service/syllabus.service';
 
 @Module({
   imports: [
@@ -18,15 +18,15 @@ import { CourseModuleService } from './service/course-module.service';
         schema: CourseSchema,
       },
       {
-        name: COURSEMODULES,
-        schema: CourseModuleSchema,
+        name: SYLLABUS,
+        schema: SyllabusSchema,
       },
     ]),
     CourseModule,
     UsersModule,
   ],
-  controllers: [CourseModuleController],
-  providers: [CourseModuleService, ResponseService, CourseService],
-  exports: [CourseModuleService],
+  controllers: [SyllabusController],
+  providers: [SyllabusService, ResponseService, CourseService],
+  exports: [SyllabusService],
 })
-export class CourseModuleModule {}
+export class SyllabusModule {}

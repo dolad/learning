@@ -5,14 +5,14 @@ import { LECTURES } from 'src/common';
 import { CreateLectureDto } from '../dto/createLectureDto';
 import { isEmpty } from 'lodash';
 import { ILecture } from '../interface/lecture.interface';
-import { CourseModuleService } from 'src/modules/course-module/service/course-module.service';
+import { SyllabusService } from 'src/modules/syllabus/service/syllabus.service';
 import { CloudinaryService } from './cloudinery.service';
 @Injectable()
 export class LectureService {
   constructor(
     @InjectModel(LECTURES)
     private readonly lectureModel: Model<ILecture>,
-    private readonly courseModuleService: CourseModuleService,
+    private readonly syllabusService: SyllabusService,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
   public async createLectures(
@@ -20,9 +20,7 @@ export class LectureService {
     file,
     lectureDto: CreateLectureDto,
   ): Promise<ILecture> {
-    const checkModule = await this.courseModuleService.getCourseModuleById(
-      module_id,
-    );
+    const checkModule = await this.syllabusService.getSyllabusById(module_id);
     if (isEmpty(checkModule))
       throw new Error(`Module with id [${module_id}] doesn't already exist`);
     const checkLectures = await this.lectureModel.findOne({
@@ -37,7 +35,7 @@ export class LectureService {
           $push: { lectures: lecture._id },
         };
         const filter = { _id: module_id };
-        const updatedCourseModule = await this.courseModuleService.updateLecture(
+        const updatedCourseModule = await this.syllabusService.updateLecture(
           filter,
           update,
         );

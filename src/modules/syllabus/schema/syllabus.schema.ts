@@ -3,11 +3,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { COURSE, LECTURES } from 'src/common';
 
-export type CourseModuleDocument = CourseModule & mongoose.Document;
+export type SyllabusDocument = Syllabus & mongoose.Document;
 
 @Schema({
   timestamps: true,
-  collection: 'course-module',
+  collection: 'syllabus',
   toJSON: {
     virtuals: true,
     transform: (_doc: any, ret: any): void => {
@@ -16,7 +16,7 @@ export type CourseModuleDocument = CourseModule & mongoose.Document;
     },
   },
 })
-export class CourseModule {
+export class Syllabus {
   @ApiProperty({
     type: String,
     description: 'title',
@@ -83,4 +83,4 @@ export class CourseModule {
   deleted_at?: Date;
 }
 
-export const CourseModuleSchema = SchemaFactory.createForClass(CourseModule);
+export const SyllabusSchema = SchemaFactory.createForClass(Syllabus);

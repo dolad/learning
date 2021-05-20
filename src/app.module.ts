@@ -7,9 +7,10 @@ import {
   UsersModule,
   AuthModule,
   CourseModule,
-  CourseModuleModule,
+  SyllabusModule,
   LectureModule,
   AssesmentModule,
+  CourseCategoryModules,
 } from './modules/index';
 @Module({
   imports: [
@@ -33,9 +34,10 @@ import {
     UsersModule,
     AuthModule,
     CourseModule,
-    CourseModuleModule,
+    SyllabusModule,
     LectureModule,
     AssesmentModule,
+    CourseCategoryModules,
   ],
 })
 export class AppModule {}
