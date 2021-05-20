@@ -1,6 +1,6 @@
 import { Document } from 'mongoose';
 
-export interface ICourseModule extends Document {
+export interface ISyllabus extends Document {
   title: string;
   description: string;
   author: string;

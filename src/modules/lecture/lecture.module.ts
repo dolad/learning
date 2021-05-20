@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { USER, COURSEMODULES, LECTURES, COURSE } from 'src/common';
+import { USER, SYLLABUS, LECTURES, COURSE } from 'src/common';
 import { ResponseService } from 'src/shared/response.service';
-import { CourseModuleModule } from '../course-module/course-module.module';
-import { CourseModuleSchema } from '../course-module/schema/course-module.schema';
-import { CourseModuleService } from '../course-module/service/course-module.service';
+import { SyllabusModule } from '../syllabus/syllabus';
+import { SyllabusSchema } from '../syllabus/schema/syllabus.schema';
+import { SyllabusService } from '../syllabus/service/syllabus.service';
 import { CourseModule } from '../course/course.module';
 import { CourseSchema } from '../course/schema/course.schema';
 import { CourseService } from '../course/service/course.service';
@@ -19,8 +19,8 @@ import { LectureService } from './service/lecture.service';
   imports: [
     MongooseModule.forFeature([
       {
-        name: COURSEMODULES,
-        schema: CourseModuleSchema,
+        name: SYLLABUS,
+        schema: SyllabusSchema,
       },
       {
         name: USER,
@@ -35,7 +35,7 @@ import { LectureService } from './service/lecture.service';
         schema: CourseSchema,
       },
     ]),
-    CourseModuleModule,
+    SyllabusModule,
     UsersModule,
     CourseModule,
   ],
@@ -44,7 +44,7 @@ import { LectureService } from './service/lecture.service';
     LectureService,
     ResponseService,
     CourseService,
-    CourseModuleService,
+    SyllabusService,
     CloudinaryService,
   ],
   exports: [LectureService],

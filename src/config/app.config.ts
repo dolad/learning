@@ -10,14 +10,14 @@ export default () => ({
     user: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
     test:process.env.DBTEST,
-    // cluster: process.env.DATABASE_CLUSTER,
+    cluster: process.env.DB_CLUSTER,
     port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
   },
   cloudinary: {
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
-},
+  },
   erp:{
     baseUrl:process.env.ERPBASEURL
   },

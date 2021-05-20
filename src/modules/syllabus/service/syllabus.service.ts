@@ -1,23 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { COURSEMODULES } from 'src/common';
-import { CreateCourseModuleDto } from '../dto/create-module.dto';
-import { ICourseModule } from '../interface/course_module.interface';
+import { SYLLABUS } from 'src/common';
+import { createSyllabusDto } from '../dto/create-syllabus.dto';
+import { ISyllabus } from '../interface/syllabus.interface';
 import { isEmpty } from 'lodash';
 import { CourseService } from 'src/modules/course/service/course.service';
 
 @Injectable()
-export class CourseModuleService {
+export class SyllabusService {
   constructor(
-    @InjectModel(COURSEMODULES)
-    private readonly courseModel: Model<ICourseModule>,
+    @InjectModel(SYLLABUS)
+    private readonly courseModel: Model<ISyllabus>,
     private readonly courseService: CourseService,
   ) {}
-  public async createModules(
+  public async createSyllabus(
     course_id: string,
-    courseDto: CreateCourseModuleDto,
-  ): Promise<ICourseModule> {
+    courseDto: createSyllabusDto,
+  ): Promise<ISyllabus> {
     const checkCourse = await this.courseService.getCourseById(course_id);
     if (isEmpty(checkCourse))
       throw new Error(`Course with id [${course_id}] doesn't already exist`);
@@ -37,10 +37,10 @@ export class CourseModuleService {
       throw new Error(`Course [${courseDto.title}] already exist`);
     }
   }
-  async updateCourseModules(
+  async updateSyllabus(
     id: string,
-    course: CreateCourseModuleDto,
-  ): Promise<ICourseModule> {
+    course: createSyllabusDto,
+  ): Promise<ISyllabus> {
     const payload = await this.courseModel.findOneAndUpdate(
       { _id: id },
       { $set: course },
@@ -48,21 +48,21 @@ export class CourseModuleService {
     );
     return payload;
   }
-  async deleteCourseModule(id: string): Promise<ICourseModule> {
+  async deleteSyllabus(id: string): Promise<ISyllabus> {
     return await this.courseModel.findByIdAndUpdate(id, {
       is_deleted: true,
       deleted_at: new Date(),
     });
   }
-  async getAllCourseModule(): Promise<ICourseModule[]> {
+  async getAllSyllabus(): Promise<ISyllabus[]> {
     return await this.courseModel
       .find({ is_deleted: false })
       .populate('lectures');
   }
-  async getCourseModuleById(course_id: string): Promise<ICourseModule> {
+  async getSyllabusById(course_id: string): Promise<ISyllabus> {
     return await this.courseModel.findById(course_id);
   }
-  async getCourseModuleByTitle(title: string): Promise<ICourseModule> {
+  async getSyllabusByTitle(title: string): Promise<ISyllabus> {
     return await this.courseModel.findOne({ title: title });
   }
   async updateLecture(filter: any, update: any): Promise<any> {

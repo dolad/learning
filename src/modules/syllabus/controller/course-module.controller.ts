@@ -17,19 +17,19 @@ import { ApiBearerAuth, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
 import { ResponseService } from 'src/shared/response.service';
 import { Response } from 'express';
-import { CourseModuleService } from '../service/course-module.service';
-import { CreateCourseModuleDto } from '../dto/create-module.dto';
+import { SyllabusService } from '../service/syllabus.service';
+import { createSyllabusDto } from '../dto/create-syllabus.dto';
 import { isEmpty } from 'lodash';
 import { RolesGuard } from 'src/modules/users/roles.guard';
 import { Roles } from 'src/modules/users/decorator/roles.decorator';
 import { UserRoles } from 'src/common';
 @ApiBearerAuth()
-@Controller('course-module')
-@ApiTags('Course-Module')
-export class CourseModuleController {
+@Controller('syllabus')
+@ApiTags('Syllabus')
+export class SyllabusController {
   constructor(
     private responseService: ResponseService,
-    private readonly courseModuleService: CourseModuleService,
+    private readonly syllabusServices: SyllabusService,
   ) {}
 
   @Post('admin/:course_id')
@@ -40,11 +40,11 @@ export class CourseModuleController {
   @Roles(UserRoles.Admin)
   public async createCourse(
     @Param('course_id') course_id: string,
-    @Body() createModule: CreateCourseModuleDto,
+    @Body() createModule: createSyllabusDto,
     @Res() res: Response,
   ): Promise<any> {
     try {
-      const modules = await this.courseModuleService.createModules(
+      const modules = await this.syllabusServices.createSyllabus(
         course_id,
         createModule,
       );
@@ -65,7 +65,7 @@ export class CourseModuleController {
   @Get('')
   async getAllCourse(@Res() res: Response) {
     try {
-      const course = await this.courseModuleService.getAllCourseModule();
+      const course = await this.syllabusServices.getAllSyllabus();
       if (isEmpty(course)) {
         return this.responseService.json(res, 404, 'No modules found');
       }
@@ -90,7 +90,7 @@ export class CourseModuleController {
   @Get('/:id')
   async getSingleModules(@Param('id') id: string, @Res() res: Response) {
     try {
-      const response = await this.courseModuleService.getCourseModuleById(id);
+      const response = await this.syllabusServices.getSyllabusById(id);
       if (!response) {
         throw new HttpException(
           `No modules with id ${id}`,
@@ -114,15 +114,12 @@ export class CourseModuleController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoles.Admin)
   async updateModules(
-    @Body() course: CreateCourseModuleDto,
+    @Body() course: createSyllabusDto,
     @Param('id') id: string,
     @Res() res: Response,
   ) {
     try {
-      const response = await this.courseModuleService.updateCourseModules(
-        id,
-        course,
-      );
+      const response = await this.syllabusServices.updateSyllabus(id, course);
 
       if (!response) {
         throw new HttpException(
@@ -149,7 +146,7 @@ export class CourseModuleController {
   @Roles(UserRoles.Admin)
   async deleteCourseModule(@Param('id') id: string, @Res() res: Response) {
     try {
-      const response = await this.courseModuleService.deleteCourseModule(id);
+      const response = await this.syllabusServices.deleteSyllabus(id);
       if (!response) {
         throw new HttpException(
           `No Course Module with id ${id}`,
@@ -177,9 +174,7 @@ export class CourseModuleController {
     @Res() res: Response,
   ) {
     try {
-      const response = await this.courseModuleService.getCourseModuleByTitle(
-        title,
-      );
+      const response = await this.syllabusServices.getSyllabusByTitle(title);
 
       if (!response) {
         throw new HttpException(
