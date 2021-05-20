@@ -5,9 +5,9 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ API-V1 , staging ]
+    branches: [staging]
   pull_request:
-    branches: [ API-V1 , staging]
+    branches: [staging]
 
 jobs:
   build:
@@ -30,6 +30,7 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "lms-ukdiongroups"  #Must be unique in Heroku
           heroku_email: "it@ukdion.com"
+          branch: "staging"
           dontuseforce: 1
     - run: npm ci
     - run: npm run lint
