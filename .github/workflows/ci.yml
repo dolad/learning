@@ -31,9 +31,9 @@ jobs:
           heroku_app_name: "lms-ukdiongroups"  #Must be unique in Heroku
           heroku_email: "it@ukdion.com"
           justlogin: true
-    -run: |
-           heroku git:remote -a lms-ukdiongroups
-           git push heroku staging
+    - run: |
+          heroku git:remote -a lms-ukdiongroups
+          git push heroku staging
     - run: npm ci
     - run: npm run lint
     - run: npm run build --if-present
