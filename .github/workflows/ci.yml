@@ -32,9 +32,8 @@ jobs:
           heroku_email: "it@ukdion.com"
           justlogin: true
     - run: |
-          heroku create lms-ukdiongroups
-          git pull heroku staging
-          git push heroku staging
+          heroku git:remote -a lms-ukdiongroups
+          git push heroku staging:main
     - run: npm ci
     - run: npm run lint
     - run: npm run build --if-present
