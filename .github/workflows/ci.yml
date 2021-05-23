@@ -1,14 +1,13 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-
-name: Integrating
+name: CI
 
 on:
   push:
-    branches: [API-V1]
+    branches: [API-V1,staging]
   pull_request:
-    branches: [API-V1]
+    branches: [API-V1,staging]
 
 jobs:
   build:
@@ -31,12 +30,10 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "lms-ukdiongroups"  #Must be unique in Heroku
           heroku_email: "it@ukdion.com"
-          branch: "staging"
           justlogin: true
     - run: |
-        git remote add heroku git@heroku.com:lms-ukdiongroups.git
-        git config user.name davidukdion && git config user.email davidakande@ukdion.com
-        git push heroku main
+          heroku git:remote -a lms-ukdiongroups
+          git push heroku staging
     - run: npm ci
     - run: npm run lint
     - run: npm run build --if-present
