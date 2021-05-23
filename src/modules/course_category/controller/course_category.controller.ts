@@ -51,7 +51,7 @@ export class CourseCategoryController {
       return this.responseService.json(
         res,
         201,
-        'Course created Successfully',
+        'Course Category created Successfully',
         course,
       );
     } catch (error) {
@@ -72,7 +72,7 @@ export class CourseCategoryController {
       return this.responseService.json(
         res,
         200,
-        'Course retrieved successfully',
+        'Course category retrieved successfully',
         course,
       );
     } catch (error) {
@@ -101,7 +101,7 @@ export class CourseCategoryController {
       return this.responseService.json(
         res,
         201,
-        'Course retrieved successfully',
+        'Course Category retrieved successfully',
         response,
       );
     } catch (error) {
@@ -134,7 +134,7 @@ export class CourseCategoryController {
       return this.responseService.json(
         res,
         201,
-        'Course updated successfully',
+        'Course Category updated successfully',
         response,
       );
     } catch (error) {

@@ -26,24 +26,38 @@ export class LectureService {
     const checkLectures = await this.lectureModel.findOne({
       title: lectureDto.title,
     });
-    const response = await this.cloudinaryService.uploadImage(file);
-    lectureDto.video_url = response.secure_url;
-    if (response.secure_url) {
-      if (isEmpty(checkLectures)) {
-        const lecture = await this.lectureModel.create(lectureDto);
-        const update = {
-          $push: { lectures: lecture._id },
-        };
-        const filter = { _id: module_id };
-        const updatedCourseModule = await this.syllabusService.updateLecture(
-          filter,
-          update,
-        );
-        return updatedCourseModule;
-      } else {
-        throw new Error(`Lecture [${lectureDto.title}] already exist`);
+
+    // for uploading
+    if (!lectureDto.video_url && file) {
+      const response = await this.cloudinaryService.uploadImage(file);
+      lectureDto.video_url = response.secure_url;
+      if (response.secure_url) {
+        if (!isEmpty(checkLectures)) {
+          throw new Error(`Lecture [${lectureDto.title}] already exist`);
+        }
+        return await this.createHelper(lectureDto, module_id);
       }
     }
+    // for youtube link
+    if (lectureDto.video_url) {
+      if (!isEmpty(checkLectures)) {
+        throw new Error(`Lecture [${lectureDto.title}] already exist`);
+      }
+      return await this.createHelper(lectureDto, module_id);
+    }
+  }
+
+  private async createHelper(payload: any, module_id): Promise<ILecture> {
+    const lecture = await this.lectureModel.create(payload);
+    const update = {
+      $push: { lectures: lecture._id },
+    };
+    const filter = { _id: module_id };
+    const updatedCourseModule = await this.syllabusService.updateLecture(
+      filter,
+      update,
+    );
+    return updatedCourseModule;
   }
   async updatelecture(
     id: string,

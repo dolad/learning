@@ -114,7 +114,7 @@ export class LectureController {
       return this.responseService.json(res, error);
     }
   }
-  @Patch('/:id')
+  @Patch('admin/:id')
   @ApiResponse({ status: 200, description: 'Successfully Processed' })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -147,7 +147,7 @@ export class LectureController {
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoles.Admin)
-  @Delete('/:id')
+  @Delete('admin/:id')
   async deleteLecture(@Param('id') id: string, @Res() res: Response) {
     try {
       const response = await this.lectureService.deleteLecture(id);

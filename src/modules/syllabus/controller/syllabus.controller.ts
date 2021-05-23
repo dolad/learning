@@ -51,7 +51,7 @@ export class SyllabusController {
       return this.responseService.json(
         res,
         201,
-        'Course Modules created Successfully',
+        'Syllabus created Successfully',
         modules,
       );
     } catch (error) {
@@ -59,7 +59,7 @@ export class SyllabusController {
     }
   }
 
-  @ApiResponse({ status: 200, description: 'Modules Successfully retreived' })
+  @ApiResponse({ status: 200, description: 'Syllabus Successfully retreived' })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   @UseGuards(JwtAuthGuard)
   @Get('')
@@ -67,12 +67,12 @@ export class SyllabusController {
     try {
       const course = await this.syllabusServices.getAllSyllabus();
       if (isEmpty(course)) {
-        return this.responseService.json(res, 404, 'No modules found');
+        return this.responseService.json(res, 404, 'No Syllabus found');
       }
       return this.responseService.json(
         res,
         200,
-        'Modules retrieved successfully',
+        'Syllabus retrieved successfully',
         course,
       );
     } catch (error) {
@@ -80,7 +80,7 @@ export class SyllabusController {
     }
   }
 
-  @ApiResponse({ status: 200, description: 'Modules Retrieved Successfully' })
+  @ApiResponse({ status: 200, description: 'Syllabus Retrieved Successfully' })
   @ApiResponse({
     status: 404,
     description: "Couldn'nt retrieve course with id",
@@ -93,14 +93,14 @@ export class SyllabusController {
       const response = await this.syllabusServices.getSyllabusById(id);
       if (!response) {
         throw new HttpException(
-          `No modules with id ${id}`,
+          `No Syllabus with id ${id}`,
           HttpStatus.NOT_FOUND,
         );
       }
       return this.responseService.json(
         res,
         201,
-        'Course module retrieved successfully',
+        'Syllabus retrieved successfully',
         response,
       );
     } catch (error) {
@@ -108,7 +108,7 @@ export class SyllabusController {
     }
   }
 
-  @Patch('/:id')
+  @Patch('admin/:id')
   @ApiResponse({ status: 200, description: 'Successfully Processed' })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -123,14 +123,14 @@ export class SyllabusController {
 
       if (!response) {
         throw new HttpException(
-          `No course model with id ${id}`,
+          `No syllabus with id ${id}`,
           HttpStatus.NOT_FOUND,
         );
       }
       return this.responseService.json(
         res,
         201,
-        'Course module updated successfully',
+        'Syllabus updated successfully',
         response,
       );
     } catch (error) {
@@ -141,7 +141,7 @@ export class SyllabusController {
   @ApiResponse({ status: 200, description: 'Successfully Processed' })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   @UseGuards(JwtAuthGuard)
-  @Delete('/:id')
+  @Delete('admin/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRoles.Admin)
   async deleteCourseModule(@Param('id') id: string, @Res() res: Response) {

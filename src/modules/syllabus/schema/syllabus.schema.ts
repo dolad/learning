@@ -68,7 +68,6 @@ export class Syllabus {
   @Prop({
     type: mongoose.Schema.Types.ObjectId || String,
     ref: COURSE,
-    autopopulate: true,
   })
   course?: string;
   @Prop({
