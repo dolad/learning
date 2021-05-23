@@ -5,9 +5,9 @@ name: CI
 
 on:
   push:
-    branches: [staging]
+    branches: [API-V1,staging]
   pull_request:
-    branches: [staging]
+    branches: [API-V1,staging]
 
 jobs:
   build:
@@ -30,7 +30,6 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "lms-ukdiongroups"  #Must be unique in Heroku
           heroku_email: "it@ukdion.com"
-          branch: "staging"
           justlogin: true
     -run: |
            heroku git:remote -a lms-ukdiongroups
