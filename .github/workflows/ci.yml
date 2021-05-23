@@ -35,7 +35,7 @@ jobs:
           justlogin: true
     - run: |
         git remote add heroku git@heroku.com:lms-ukdiongroups.git
-        git config user.name davidukdion && git config user.email davidakande@ukdion.com
+        git config user.name dolad && git config user.email adavidoladele@gmail.com
         git pull heroku staging
         git push heroku staging
     - run: npm ci
