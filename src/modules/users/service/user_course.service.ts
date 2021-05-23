@@ -28,7 +28,7 @@ export class UserCourseService {
         course_id: course_id,
       });
     } else {
-      throw new Error(`User [${courseDto.title}] already exist`);
+      throw new Error(`already enrolled  already`);
     }
     return;
   }
