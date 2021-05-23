@@ -33,6 +33,7 @@ jobs:
           justlogin: true
     - run: |
           heroku git:remote -a lms-ukdiongroup
+          git fetch --all --unshallow
           git push heroku staging:main
     - run: npm ci
     - run: npm run lint
