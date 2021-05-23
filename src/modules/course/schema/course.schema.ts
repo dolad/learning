@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { BRANCH, SYLLABUS, DEPARTMENT } from 'src/common';
+import { BRANCH, SYLLABUS, DEPARTMENT, COURSE_CATEGORY } from 'src/common';
 
 export type CourseDocument = Course & mongoose.Document;
 
@@ -69,7 +69,7 @@ export class Course {
       autopopulate: true,
     },
   ])
-  course_modules?: [];
+  syllabus?: [];
   @ApiProperty({
     type: String,
     description: 'Branch Object',
@@ -88,6 +88,15 @@ export class Course {
     ref: DEPARTMENT,
   })
   department_id?: [];
+  @ApiProperty({
+    type: String,
+    description: 'category',
+  })
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: COURSE_CATEGORY,
+  })
+  category_id?: string;
   @Prop({
     type: Boolean,
     default: false,

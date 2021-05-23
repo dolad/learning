@@ -20,4 +20,8 @@ export class CreateCourseDto {
   @IsString()
   @ApiProperty()
   background_image?: string;
+
+  @IsString()
+  @ApiProperty()
+  category_id?: string;
 }

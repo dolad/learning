@@ -11,21 +11,23 @@ import { CourseService } from 'src/modules/course/service/course.service';
 export class SyllabusService {
   constructor(
     @InjectModel(SYLLABUS)
-    private readonly courseModel: Model<ISyllabus>,
+    private readonly syllabusModel: Model<ISyllabus>,
     private readonly courseService: CourseService,
   ) {}
   public async createSyllabus(
-    course_id: string,
+    course_id: any,
     courseDto: createSyllabusDto,
   ): Promise<ISyllabus> {
     const checkCourse = await this.courseService.getCourseById(course_id);
     if (isEmpty(checkCourse))
       throw new Error(`Course with id [${course_id}] doesn't already exist`);
-    const check = await this.courseModel.findOne({ title: courseDto.title });
+    const check = await this.syllabusModel.findOne({ title: courseDto.title });
     if (isEmpty(check)) {
-      const module = await this.courseModel.create(courseDto);
+      const syllabus = await new this.syllabusModel(courseDto);
+      syllabus.course = course_id;
+      await syllabus.save();
       const update = {
-        $push: { course_modules: module._id },
+        $push: { syllabus: syllabus._id },
       };
       const filter = { _id: course_id };
       const updatedCourseModule = await this.courseService.updateCourseModule(
@@ -34,14 +36,14 @@ export class SyllabusService {
       );
       return updatedCourseModule;
     } else {
-      throw new Error(`Course [${courseDto.title}] already exist`);
+      throw new Error(`Syllabus [${courseDto.title}] already exist`);
     }
   }
   async updateSyllabus(
     id: string,
     course: createSyllabusDto,
   ): Promise<ISyllabus> {
-    const payload = await this.courseModel.findOneAndUpdate(
+    const payload = await this.syllabusModel.findOneAndUpdate(
       { _id: id },
       { $set: course },
       { upsert: true, new: true },
@@ -49,25 +51,25 @@ export class SyllabusService {
     return payload;
   }
   async deleteSyllabus(id: string): Promise<ISyllabus> {
-    return await this.courseModel.findByIdAndUpdate(id, {
+    return await this.syllabusModel.findByIdAndUpdate(id, {
       is_deleted: true,
       deleted_at: new Date(),
     });
   }
   async getAllSyllabus(): Promise<ISyllabus[]> {
-    return await this.courseModel
+    return await this.syllabusModel
       .find({ is_deleted: false })
       .populate('lectures');
   }
   async getSyllabusById(course_id: string): Promise<ISyllabus> {
-    return await this.courseModel.findById(course_id);
+    return await this.syllabusModel.findById(course_id);
   }
   async getSyllabusByTitle(title: string): Promise<ISyllabus> {
-    return await this.courseModel.findOne({ title: title });
+    return await this.syllabusModel.findOne({ title: title });
   }
   async updateLecture(filter: any, update: any): Promise<any> {
     const option = { upsert: true, new: true };
-    return await this.courseModel
+    return await this.syllabusModel
       .findOneAndUpdate(filter, update, option)
       .populate('lectures');
   }

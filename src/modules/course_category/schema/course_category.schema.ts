@@ -23,7 +23,7 @@ export class CourseCategory {
     type: String,
     unique: true,
   })
-  title: string;
+  name: string;
   @ApiProperty({
     type: String,
     description: 'description',

@@ -1,9 +1,9 @@
 import * as mongoose from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { AssesmentStatus, COURSE, USER } from 'src/common';
+import { CourseStatus, CourseType, COURSE, USER } from 'src/common';
 
-export type UserCourse = User_Course & mongoose.Document;
+export type UserCourseDocument = User_Course & mongoose.Document;
 
 @Schema({
   timestamps: true,
@@ -39,25 +39,36 @@ export class User_Course {
     type: mongoose.Schema.Types.ObjectId,
     ref: COURSE,
   })
-  assesments_id: string;
+  course_id: string;
   @ApiProperty({
     type: Number,
-    description: 'score',
+    description: 'completed',
   })
   @Prop({
-    type: Number,
+    type: Boolean,
   })
-  score?: number;
+  completed?: boolean;
   @ApiProperty({
     type: String,
-    description: 'Assesment_status',
+    description: 'Course Status',
   })
   @Prop({
     type: String,
-    enum: AssesmentStatus,
-    default: AssesmentStatus.Inactive,
+    enum: CourseStatus,
+    default: CourseStatus.Inactive,
   })
   status?: string;
+
+  @ApiProperty({
+    type: String,
+    description: 'Course Type',
+  })
+  @Prop({
+    type: String,
+    enum: CourseType.Enrolled,
+    default: CourseType,
+  })
+  course_type?: string;
 
   @ApiProperty({
     type: String,
@@ -70,4 +81,4 @@ export class User_Course {
   completed_at?: Date;
 }
 
-export const UserAssessmentSchema = SchemaFactory.createForClass(User_Course);
+export const UserCourseSchema = SchemaFactory.createForClass(User_Course);

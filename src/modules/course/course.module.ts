@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { COURSE } from 'src/common';
 import { ResponseService } from 'src/shared/response.service';
@@ -16,8 +16,8 @@ import { CourseService } from './service/course.service';
         schema: CourseSchema,
       },
     ]),
-    AuthModule,
-    UsersModule,
+    forwardRef(() => UsersModule),
+    forwardRef(() => AuthModule),
   ],
   controllers: [CourseController],
   providers: [CourseService, ResponseService],

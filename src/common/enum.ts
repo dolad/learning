@@ -16,6 +16,17 @@ export enum AssesmentStatus {
   Inactive = 'inactive',
 }
 
+export enum CourseStatus {
+  Active = 'active',
+  Completed = 'completed',
+  Inactive = 'inactive',
+}
+
+export enum CourseType {
+  Enrolled = 'enrolled',
+  Assigned = 'assigned',
+}
+
 export enum AssesmentType {
   General = 'general',
   Selected = 'selected',
@@ -25,3 +36,5 @@ export const UserRolesEnums = Object.values(UserRoles);
 export const UserTypesEnums = Object.values(UserTypes);
 export const AssesmentStatusEnum = Object.values(AssesmentStatus);
 export const AssesmentTypeEnums = Object.values(AssesmentType);
+export const CourseTypeEnum = Object.values(CourseType);
+export const CourseStatusEnum = Object.values(CourseStatus);

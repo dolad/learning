@@ -19,7 +19,7 @@ export class CourseCategoryService {
     if (isEmpty(check)) {
       return await this.courseCategory.create(courseDto);
     } else {
-      throw new Error(`Course [${courseDto.name}] already exist`);
+      throw new Error(`Course Category [${courseDto.name}] already exist`);
     }
   }
   async updateCourseCategory(

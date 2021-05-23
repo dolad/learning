@@ -1,22 +1,16 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { COURSE, SYLLABUS } from 'src/common';
+import { SYLLABUS } from 'src/common';
 import { ResponseService } from 'src/shared/response.service';
 import { CourseModule } from '../course/course.module';
-import { CourseSchema } from '../course/schema/course.schema';
-import { CourseService } from '../course/service/course.service';
 import { UsersModule } from '../users/users.module';
-import { SyllabusController } from './controller/course-module.controller';
+import { SyllabusController } from './controller/syllabus.controller';
 import { SyllabusSchema } from './schema/syllabus.schema';
 import { SyllabusService } from './service/syllabus.service';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
-      {
-        name: COURSE,
-        schema: CourseSchema,
-      },
       {
         name: SYLLABUS,
         schema: SyllabusSchema,
@@ -26,7 +20,7 @@ import { SyllabusService } from './service/syllabus.service';
     UsersModule,
   ],
   controllers: [SyllabusController],
-  providers: [SyllabusService, ResponseService, CourseService],
+  providers: [SyllabusService, ResponseService],
   exports: [SyllabusService],
 })
 export class SyllabusModule {}

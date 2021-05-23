@@ -1,6 +1,7 @@
 import {
   Body,
   Res,
+  Req,
   Param,
   Controller,
   UseGuards,
@@ -60,9 +61,9 @@ export class CourseController {
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   @UseGuards(JwtAuthGuard)
   @Get('')
-  async getAllCourse(@Res() res: Response) {
+  async getAllCourse(@Res() res: Response, @Req() req) {
     try {
-      const course = await this.courseService.getAllCourse();
+      const course = await this.courseService.getAllCourse(req.query);
       if (isEmpty(course)) {
         return this.responseService.json(res, 404, 'No course found');
       }
