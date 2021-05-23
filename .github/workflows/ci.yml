@@ -28,11 +28,11 @@ jobs:
     - uses: akhileshns/heroku-deploy@v3.12.12
       with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "lms-ukdiongroups"  #Must be unique in Heroku
+          heroku_app_name: "lms-ukdiongroup"  #Must be unique in Heroku
           heroku_email: "it@ukdion.com"
           justlogin: true
     - run: |
-          heroku git:remote -a lms-ukdiongroups
+          heroku git:remote -a lms-ukdiongroup
           git push heroku staging:main
     - run: npm ci
     - run: npm run lint
