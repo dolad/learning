@@ -36,7 +36,7 @@ jobs:
     - run: |
         git remote add heroku git@heroku.com:lms-ukdiongroups.git
         git config user.name davidukdion && git config user.email davidakande@ukdion.com
-        git push heroku main
+        git push heroku API-V1
     - run: npm ci
     - run: npm run lint
     - run: npm run build --if-present
