@@ -18,7 +18,6 @@ jobs:
       matrix:
         node-version: [10.x, 12.x, 14.x, 15.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
@@ -32,7 +31,7 @@ jobs:
           heroku_email: "it@ukdion.com"
           justlogin: true
     - run: |
-          heroku git:remote -a lms-ukdiongroups
+          heroku git:remote -a lms-ukdiongroup
           git pull heroku staging
           git push heroku staging
     - run: npm ci
