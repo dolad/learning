@@ -36,8 +36,6 @@ jobs:
           git config --global user.email "adavidoladele@gmail.com"
           git config --global user.name "dolad"
           git remote -v
-          git add -A
-          git commit -m "commit for deploy to heroku"
           git push heroku staging
     - run: npm ci
     - run: npm run lint
