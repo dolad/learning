@@ -36,7 +36,7 @@ jobs:
           git config --global user.email "adavidoladele@gmail.com"
           git config --global user.name "dolad"
           git status
-          git fetch --unshallow github staging
+          git fetch --unshallow staging
           git remote -v
           git push heroku staging
     - run: npm ci
