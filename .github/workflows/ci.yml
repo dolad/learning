@@ -38,6 +38,7 @@ jobs:
           git remote -v
           git add -A
           git commit -m "commit for deploy to heroku"
+          git push heroku staging
     - run: npm ci
     - run: npm run lint
     - run: npm run build --if-present
