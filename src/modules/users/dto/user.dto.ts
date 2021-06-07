@@ -8,6 +8,18 @@ export class MakeAdmin {
   email: string;
 }
 
+export class ChangePassword {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  password: string;
+}
+
 export class UpdateUserDTO {
   @IsString()
   @IsOptional()

@@ -19,11 +19,6 @@ export type UserCourseDocument = User_Course & mongoose.Document;
 export class User_Course {
   @ApiProperty({
     type: String,
-    description: 'id',
-  })
-  id?: string;
-  @ApiProperty({
-    type: String,
     description: 'user_id',
   })
   @Prop({
@@ -46,6 +41,7 @@ export class User_Course {
   })
   @Prop({
     type: Boolean,
+    default: false,
   })
   completed?: boolean;
   @ApiProperty({
@@ -58,18 +54,6 @@ export class User_Course {
     default: CourseStatus.Inactive,
   })
   status?: string;
-
-  @ApiProperty({
-    type: String,
-    description: 'Course Type',
-  })
-  @Prop({
-    type: String,
-    enum: CourseType.Enrolled,
-    default: CourseType,
-  })
-  course_type?: string;
-
   @ApiProperty({
     type: String,
     description: 'Completed_at',

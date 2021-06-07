@@ -6,6 +6,7 @@ import {
   Controller,
   UseGuards,
   Post,
+  Delete,
   Get,
   Patch,
   HttpException,
@@ -21,8 +22,9 @@ import { AuthUserDecorator } from '../decorator/user.decorator';
 import { UserRoles } from 'src/common';
 import { Roles } from '../decorator/roles.decorator';
 import { RolesGuard } from '../roles.guard';
-import { MakeAdmin, UpdateUserDTO } from '../dto/user.dto';
+import { ChangePassword, MakeAdmin, UpdateUserDTO } from '../dto/user.dto';
 import { UserAssesmentService } from '../service/user_assesment.service';
+import { UserCourseService } from '../service/user_course.service';
 @ApiBearerAuth()
 @ApiTags('Users')
 @Controller('users')
@@ -31,6 +33,7 @@ export class UserController {
     private readonly userService: UserService,
     private readonly userAssesmentService: UserAssesmentService,
     private readonly responseService: ResponseService,
+    private readonly userCourseService: UserCourseService,
   ) {}
 
   @Post('make-admin')
@@ -52,6 +55,30 @@ export class UserController {
         res,
         200,
         'User profile updated successfully',
+        user,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
+
+  @Patch('reset-Password')
+  async resetPassword(
+    @Body() changePasswordDto: ChangePassword,
+    @Res() res: Response,
+  ): Promise<any> {
+    try {
+      const user = await this.userService.resetPassword(changePasswordDto);
+      if (!user) {
+        throw new HttpException(
+          `password reset was not succesful for this ${changePasswordDto.email}`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      return this.responseService.json(
+        res,
+        200,
+        'User password updated successfully',
         user,
       );
     } catch (error) {
@@ -148,6 +175,62 @@ export class UserController {
       if (!user) {
         throw new HttpException(`No user with id ${id}`, HttpStatus.NOT_FOUND);
       }
+      return this.responseService.json(
+        res,
+        200,
+        'user retrieved successfully',
+        user,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
+
+  @Post('enroll')
+  @ApiResponse({
+    status: 200,
+    description: 'Users Successfully enrolled',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  @UseGuards(JwtAuthGuard)
+  async enrolledForCourse(
+    @AuthUserDecorator() authUser: any,
+    @Body() course_id: string,
+    @Res() res: Response,
+  ): Promise<any> {
+    try {
+      const user = await this.userCourseService.enroll(
+        authUser.userId,
+        course_id,
+      );
+      return this.responseService.json(
+        res,
+        200,
+        'user retrieved successfully',
+        user,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
+
+  @Delete('unassignCourse/:course_id/:user_id')
+  @ApiResponse({
+    status: 200,
+    description: 'Users Successfully unenrolled',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  @UseGuards(JwtAuthGuard)
+  async unAssignedCourse(
+    @Param() course_id: string,
+    @Param() user_id: string,
+    @Res() res: Response,
+  ): Promise<any> {
+    try {
+      const user = await this.userCourseService.unassignedCourse(
+        user_id,
+        course_id,
+      );
       return this.responseService.json(
         res,
         200,
