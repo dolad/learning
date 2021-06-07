@@ -16,7 +16,7 @@ export class UserCourseService {
     private readonly courseService: CourseService,
   ) {}
 
-  async enrolled(user_id, course_id: any): Promise<UserCourseDocument> {
+  async enroll(user_id, course_id: any): Promise<UserCourseDocument> {
     //   check if user has record of this collection
     const check = await this.userCourseModel.findOne({
       user_id: user_id,
@@ -28,8 +28,26 @@ export class UserCourseService {
         course_id: course_id,
       });
     } else {
+      throw new Error(`already enrolled already`);
+    }
+  }
+
+  async unassignedCourse(user_id, course_id: any): Promise<any> {
+    //   check if user has record of this collection
+    const check = await this.userCourseModel.findOne({
+      user_id: user_id,
+      course_id: course_id,
+    });
+    if (isEmpty(check)) {
+      const result = await this.userCourseModel.deleteOne({
+        user_id: user_id,
+        course_id: course_id,
+      });
+      if (result) {
+        return 'course successfully unasigned';
+      }
+    } else {
       throw new Error(`already enrolled  already`);
     }
-    return;
   }
 }

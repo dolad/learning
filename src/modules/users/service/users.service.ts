@@ -7,6 +7,8 @@ import { QueryOptions } from '../../../common/query';
 import { IBranch, IDepartment } from '../interfaces/department.interface';
 import { ErpClass } from 'src/modules/auth/service/ErpService';
 import { PaginateModel, PaginateResult, PaginateOptions } from 'mongoose';
+import { ChangePassword } from '../dto/user.dto';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserService {
@@ -68,6 +70,21 @@ export class UserService {
 
   async remove(id: string): Promise<any> {
     return await this.userModel.findByIdAndDelete(id);
+  }
+
+  async resetPassword(payload: ChangePassword): Promise<any> {
+    const user = await this.userModel.find({ email: payload.email });
+    if (!user) {
+      throw new Error('No user found');
+    }
+    const hash = bcrypt.hashSync(payload.password, 10);
+    const filter = { email: payload.email };
+    const update = {
+      $set: {
+        password: hash,
+      },
+    };
+    return this.updateWithFilter(filter, update);
   }
 
   async updateAllUserDocument(update: any): Promise<any> {
