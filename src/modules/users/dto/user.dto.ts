@@ -40,4 +40,14 @@ export class UpdateUserDTO {
   @IsOptional()
   @ApiProperty()
   phone_no?: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  department: string;
+
+  @IsString()
+  @IsOptional()
+  @ApiProperty()
+  branch: string;
 }

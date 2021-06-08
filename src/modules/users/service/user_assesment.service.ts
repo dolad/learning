@@ -116,11 +116,27 @@ export class UserAssesmentService {
   }
   async updateWithFilter(filter: any, update: any): Promise<any> {
     const option = { upsert: true, returnNewDocument: true, new: true };
-    return await this.userAssesmentModel.findOneAndUpdate(
-      filter,
-      update,
-      option,
-    );
+    return await this.userAssesmentModel
+      .findOneAndUpdate(filter, update, option)
+      .populate('assesments_id')
+      .exec();
+  }
+
+  async completedAssesment(id: string): Promise<any> {
+    return await this.userAssesmentModel
+      .find({
+        assesments_id: id,
+        status: 'completed',
+      })
+      .populate('user_id')
+      .exec();
+  }
+
+  async notAttemptedAssesment(id: string): Promise<any> {
+    return await this.userAssesmentModel.find({
+      assesments_id: id,
+      status: 'inactive',
+    });
   }
 
   async delete(auth_id: string, assesments_id: string): Promise<any> {

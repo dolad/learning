@@ -293,6 +293,63 @@ export class UserController {
     }
   }
 
+  @Get('/completed-assesment/:assesment_id')
+  @ApiResponse({
+    status: 200,
+    description: 'UserList Successfully retrieved',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  async completedAssesmentUser(
+    @Res() res: Response,
+    @Param() assesment_id: any,
+  ): Promise<any> {
+    try {
+      console.log(assesment_id.assesment_id);
+      const users = await this.userAssesmentService.completedAssesment(
+        assesment_id.assesment_id,
+      );
+      if (!users) {
+        throw new HttpException(
+          'No user has completed this assesment',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      return this.responseService.json(
+        res,
+        200,
+        'List retrieved successfully',
+        users,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
+
+  @Get('/uncompleted-assesment/:assesment_id')
+  @ApiResponse({
+    status: 200,
+    description: 'Branches Successfully retrieved',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  async notCompletedAssesmentUser(
+    @Res() res: Response,
+    @Param() assesment_id: string,
+  ): Promise<any> {
+    try {
+      const users = await this.userAssesmentService.notAttemptedAssesment(
+        assesment_id,
+      );
+      return this.responseService.json(
+        res,
+        200,
+        'List retrieved successfully',
+        users,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
+
   @Get('all/branches')
   @ApiResponse({
     status: 200,

@@ -99,6 +99,7 @@ export class Assessment {
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: USER,
+      autopopulate: true,
     },
   ])
   users?: [];
