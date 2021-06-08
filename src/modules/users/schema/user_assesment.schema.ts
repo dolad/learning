@@ -38,7 +38,6 @@ export class User_Assesments {
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: ASSESSMENT,
-    autopopulate: true,
   })
   assesments_id: string;
   @ApiProperty({
