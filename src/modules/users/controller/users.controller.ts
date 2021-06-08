@@ -350,6 +350,31 @@ export class UserController {
     }
   }
 
+  @Get('/:user_id/:assesment_id')
+  @ApiResponse({
+    status: 200,
+    description: 'user assesment details Successfully retrieved',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  async userAssesmentDetails(
+    @Res() res: Response,
+    @Param() payload: string,
+  ): Promise<any> {
+    try {
+      const userAssesment = await this.userAssesmentService.userAssesment(
+        payload,
+      );
+      return this.responseService.json(
+        res,
+        200,
+        'userAssesment retrieved successfully',
+        userAssesment,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
+
   @Get('all/branches')
   @ApiResponse({
     status: 200,

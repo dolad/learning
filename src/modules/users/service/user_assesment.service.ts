@@ -114,6 +114,17 @@ export class UserAssesmentService {
       );
     }
   }
+
+  async userAssesment(payload: any): Promise<any> {
+    return await this.userAssesmentModel
+      .find({
+        user_id: payload.user_id,
+        assesments_id: payload.assesment_id,
+      })
+      .populate('assesments_id')
+      .exec();
+  }
+
   async updateWithFilter(filter: any, update: any): Promise<any> {
     const option = { upsert: true, returnNewDocument: true, new: true };
     return await this.userAssesmentModel
