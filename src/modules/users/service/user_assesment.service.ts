@@ -26,6 +26,7 @@ export class UserAssesmentService {
       throw new Error(`Cant user_assesment table`);
     }
   }
+
   async create(assesment: Array<any>): Promise<IUserAssesment[]> {
     try {
       const userAsses = await this.userAssesmentModel.insertMany(assesment);
@@ -37,18 +38,21 @@ export class UserAssesmentService {
 
   async findAll(query?: any): Promise<IUserAssesment[]> {
     const queryUser = !query
-      ? await this.userAssesmentModel.find()
-      : await this.userAssesmentModel.find({ ...query });
+      ? await this.userAssesmentModel.find({ assesments_id: { $ne: null } })
+      : await this.userAssesmentModel.find({
+          assesments_id: { $ne: null },
+          ...query,
+        });
     return queryUser;
   }
 
   async findWithUserID(userID: string, query?: any): Promise<IUserAssesment[]> {
     const queryUser = !query
       ? await this.userAssesmentModel
-          .find({ user_id: userID })
+          .find({ user_id: userID, status: 'completed' })
           .populate('assesments_id')
       : await this.userAssesmentModel
-          .find({ user_id: userID, ...query })
+          .find({ user_id: userID, assesments_id: { $ne: null }, ...query })
           .populate('assesments_id');
     return queryUser;
   }
