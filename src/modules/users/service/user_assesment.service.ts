@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { AssesmentStatus, USER_ASSESMENT } from 'src/common';
+import {
+  AssesmentStatus,
+  AssesmentStatusEnum,
+  USER_ASSESMENT,
+} from 'src/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IUserAssesment } from '../interfaces/user_assesment.interface';
 import { SubmittingAssesment } from 'src/modules/assesment/dto/update-assesment.dto';
@@ -126,6 +130,21 @@ export class UserAssesmentService {
         assesments_id: payload.assesment_id,
       })
       .populate('assesments_id')
+      .exec();
+  }
+
+  async userStatistic(payload: any, status: string): Promise<any> {
+    const newArray: any = Object.values(AssesmentStatusEnum);
+    const result = newArray.includes(status);
+    if (result === false) {
+      throw new Error(' status not found');
+    }
+    return await this.userAssesmentModel
+      .find({
+        assesments_id: payload,
+        status: status,
+      })
+      .populate('user_id')
       .exec();
   }
 

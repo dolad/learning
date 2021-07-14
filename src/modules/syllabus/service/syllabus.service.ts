@@ -25,7 +25,6 @@ export class SyllabusService {
     if (isEmpty(check)) {
       const syllabus = await new this.syllabusModel(courseDto);
       syllabus.course = course_id;
-      await syllabus.save();
       const update = {
         $push: { syllabus: syllabus._id },
       };
@@ -34,6 +33,7 @@ export class SyllabusService {
         filter,
         update,
       );
+      await syllabus.save();
       return updatedCourseModule;
     } else {
       throw new Error(`Syllabus [${courseDto.title}] already exist`);

@@ -6,17 +6,25 @@ import { CreateCourseDto } from '../dto/course.dto';
 import { ICourse } from '../interface/course.interface';
 import { isEmpty } from 'lodash';
 import { PaginateModel, PaginateResult, PaginateOptions } from 'mongoose';
+import { CourseCategoryService } from '../../course_category/service/course_category.service';
 
 @Injectable()
 export class CourseService {
   constructor(
     @InjectModel(COURSE)
     private readonly courseModel: PaginateModel<ICourse>,
+    private readonly courseCategoryService: CourseCategoryService,
   ) {}
-  public async createCourse(courseDto: CreateCourseDto): Promise<ICourse> {
+  public async createCourse(
+    courseDto: CreateCourseDto,
+    course_category_id: string,
+  ): Promise<ICourse> {
     const check = await this.courseModel.findOne({ title: courseDto.title });
     if (isEmpty(check)) {
-      return await this.courseModel.create(courseDto);
+      const course = new this.courseModel(courseDto);
+      this.courseCategoryService.appendCourse(course_category_id, course._id);
+      await course.save();
+      return course;
     } else {
       throw new Error(`Course [${courseDto.title}] already exist`);
     }

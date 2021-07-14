@@ -33,30 +33,6 @@ export class CourseController {
     private readonly courseService: CourseService,
     private responseService: ResponseService,
   ) {}
-
-  @Post('/admin')
-  @UsePipes(new ValidationPipe({ transform: true }))
-  @ApiResponse({ status: 201, description: 'Successfully Processed' })
-  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
-  @Roles(UserRoles.Admin)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  public async createCourse(
-    @Body() createCourse: CreateCourseDto,
-    @Res() res: Response,
-  ): Promise<any> {
-    try {
-      const course = await this.courseService.createCourse(createCourse);
-      return this.responseService.json(
-        res,
-        201,
-        'Course created Successfully',
-        course,
-      );
-    } catch (error) {
-      return this.responseService.json(res, error);
-    }
-  }
-
   @ApiResponse({ status: 200, description: 'Course Successfully retreived' })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   @UseGuards(JwtAuthGuard)
@@ -119,7 +95,6 @@ export class CourseController {
   ) {
     try {
       const response = await this.courseService.updateCourse(id, course);
-
       if (!response) {
         throw new HttpException(
           `No course with id ${id}`,
@@ -167,7 +142,7 @@ export class CourseController {
   @ApiResponse({ status: 200, description: 'Successfully Processed' })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   @UseGuards(JwtAuthGuard)
-  @Get('/:title')
+  @Get('get-by-title/:title')
   async getCourseByName(@Param('title') title: string, @Res() res: Response) {
     try {
       const response = await this.courseService.getCourseByTitle(title);
@@ -184,6 +159,29 @@ export class CourseController {
         201,
         'retrieved successfully',
         response,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
+
+  @Post('create/:id')
+  @ApiResponse({ status: 201, description: 'Successfully Processed' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  @Roles(UserRoles.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  public async createCourse(
+    @Body() createCourse: CreateCourseDto,
+    @Param('id') id: string,
+    @Res() res: Response,
+  ): Promise<any> {
+    try {
+      const course = await this.courseService.createCourse(createCourse, id);
+      return this.responseService.json(
+        res,
+        201,
+        'Course created Successfully',
+        course,
       );
     } catch (error) {
       return this.responseService.json(res, error);
