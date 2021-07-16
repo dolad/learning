@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { AssesmentStatus, USER_ASSESMENT } from 'src/common';
+import {
+  AssesmentStatus,
+  AssesmentStatusEnum,
+  USER_ASSESMENT,
+} from 'src/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { IUserAssesment } from '../interfaces/user_assesment.interface';
 import { SubmittingAssesment } from 'src/modules/assesment/dto/update-assesment.dto';
@@ -26,6 +30,7 @@ export class UserAssesmentService {
       throw new Error(`Cant user_assesment table`);
     }
   }
+
   async create(assesment: Array<any>): Promise<IUserAssesment[]> {
     try {
       const userAsses = await this.userAssesmentModel.insertMany(assesment);
@@ -37,18 +42,21 @@ export class UserAssesmentService {
 
   async findAll(query?: any): Promise<IUserAssesment[]> {
     const queryUser = !query
-      ? await this.userAssesmentModel.find()
-      : await this.userAssesmentModel.find({ ...query });
+      ? await this.userAssesmentModel.find({ assesments_id: { $ne: null } })
+      : await this.userAssesmentModel.find({
+          assesments_id: { $ne: null },
+          ...query,
+        });
     return queryUser;
   }
 
   async findWithUserID(userID: string, query?: any): Promise<IUserAssesment[]> {
     const queryUser = !query
       ? await this.userAssesmentModel
-          .find({ user_id: userID })
+          .find({ user_id: userID, status: 'completed' })
           .populate('assesments_id')
       : await this.userAssesmentModel
-          .find({ user_id: userID, ...query })
+          .find({ user_id: userID, assesments_id: { $ne: null }, ...query })
           .populate('assesments_id');
     return queryUser;
   }
@@ -122,6 +130,21 @@ export class UserAssesmentService {
         assesments_id: payload.assesment_id,
       })
       .populate('assesments_id')
+      .exec();
+  }
+
+  async userStatistic(payload: any, status: string): Promise<any> {
+    const newArray: any = Object.values(AssesmentStatusEnum);
+    const result = newArray.includes(status);
+    if (result === false) {
+      throw new Error(' status not found');
+    }
+    return await this.userAssesmentModel
+      .find({
+        assesments_id: payload,
+        status: status,
+      })
+      .populate('user_id')
       .exec();
   }
 

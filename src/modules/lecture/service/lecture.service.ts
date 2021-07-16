@@ -20,6 +20,13 @@ export class LectureService {
     file,
     lectureDto: CreateLectureDto,
   ): Promise<ILecture> {
+    // should be able to upload doc of type of pdf,docx, ppt
+    // deactivate assesment
+    // author module
+    // progress of the lecture
+    // user course progress
+    // list of user enrolled
+
     const checkModule = await this.syllabusService.getSyllabusById(module_id);
     if (isEmpty(checkModule))
       throw new Error(`Module with id [${module_id}] doesn't already exist`);

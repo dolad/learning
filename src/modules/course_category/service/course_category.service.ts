@@ -34,6 +34,25 @@ export class CourseCategoryService {
     return payload;
   }
 
+  async appendCourse(
+    id: string,
+    course_id: string,
+  ): Promise<CourseCategoryDocument> {
+    const update = {
+      $push: {
+        courses: course_id,
+      },
+    };
+    const filter = { _id: id };
+    const option = { upsert: true, new: true };
+    const payload = await this.courseCategory.findOneAndUpdate(
+      filter,
+      update,
+      option,
+    );
+    return payload;
+  }
+
   async deleteCourseCategory(id: string): Promise<CourseCategoryDocument> {
     return await this.courseCategory.findByIdAndUpdate(id, {
       is_deleted: true,

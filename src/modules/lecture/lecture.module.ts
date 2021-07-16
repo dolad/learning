@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { USER, SYLLABUS, LECTURES, COURSE } from 'src/common';
 import { ResponseService } from 'src/shared/response.service';
@@ -37,16 +37,10 @@ import { LectureService } from './service/lecture.service';
     ]),
     SyllabusModule,
     UsersModule,
-    CourseModule,
+    forwardRef(() => CourseModule),
   ],
   controllers: [LectureController],
-  providers: [
-    LectureService,
-    ResponseService,
-    CourseService,
-    SyllabusService,
-    CloudinaryService,
-  ],
+  providers: [LectureService, ResponseService, CloudinaryService],
   exports: [LectureService],
 })
 export class LectureModule {}

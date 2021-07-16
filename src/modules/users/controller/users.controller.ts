@@ -3,6 +3,7 @@ import {
   Res,
   Req,
   Param,
+  Query,
   Controller,
   UseGuards,
   Post,
@@ -373,8 +374,34 @@ export class UserController {
       return this.responseService.json(res, error);
     }
   }
+  @Get('stat/:assesment_id')
+  @ApiResponse({
+    status: 200,
+    description: 'user assesment details Successfully retrieved',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  async userStatics(
+    @Res() res: Response,
+    @Query('status') status: string,
+    @Param('assesment_id') payload: string,
+  ): Promise<any> {
+    try {
+      const userAssesment = await this.userAssesmentService.userStatistic(
+        payload,
+        status,
+      );
+      return this.responseService.json(
+        res,
+        200,
+        'userAssesment retrieved successfully',
+        userAssesment,
+      );
+    } catch (error) {
+      return this.responseService.json(res, error);
+    }
+  }
 
-  @Get('/:user_id/:assesment_id')
+  @Get(':user_id/:assesment_id')
   @ApiResponse({
     status: 200,
     description: 'user assesment details Successfully retrieved',

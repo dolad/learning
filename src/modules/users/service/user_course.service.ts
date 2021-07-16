@@ -50,4 +50,30 @@ export class UserCourseService {
       throw new Error(`already enrolled  already`);
     }
   }
+  async getEnrolledCourse(payload: any): Promise<any> {
+    return await this.userCourseModel
+      .find({
+        user_id: payload.user_id,
+      })
+      .populate('course_id')
+      .exec();
+  }
+  async getCompletedCourse(payload: any): Promise<any> {
+    return await this.userCourseModel
+      .find({
+        user_id: payload.user_id,
+        completed: true,
+      })
+      .populate('course_id')
+      .exec();
+  }
+  async getUnCompletedCourse(payload: any): Promise<any> {
+    return await this.userCourseModel
+      .find({
+        user_id: payload.user_id,
+        completed: false,
+      })
+      .populate('course_id')
+      .exec();
+  }
 }
